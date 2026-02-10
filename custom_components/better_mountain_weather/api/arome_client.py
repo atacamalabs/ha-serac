@@ -1,6 +1,7 @@
 """AROME API client wrapper for meteofrance-api."""
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime, timedelta
 import logging
 from typing import Any
@@ -39,7 +40,12 @@ class AromeClient:
             Dictionary with current weather data
         """
         try:
-            forecast = await self._client.get_forecast(self._latitude, self._longitude)
+            # Run blocking call in executor
+            forecast = await asyncio.to_thread(
+                self._client.get_forecast,
+                self._latitude,
+                self._longitude,
+            )
             current = forecast.current_forecast
 
             return {
@@ -65,7 +71,12 @@ class AromeClient:
             List of daily forecast dictionaries
         """
         try:
-            forecast = await self._client.get_forecast(self._latitude, self._longitude)
+            # Run blocking call in executor
+            forecast = await asyncio.to_thread(
+                self._client.get_forecast,
+                self._latitude,
+                self._longitude,
+            )
             daily_forecasts = []
 
             for daily in forecast.daily_forecast:
@@ -93,7 +104,12 @@ class AromeClient:
             List of hourly forecast dictionaries
         """
         try:
-            forecast = await self._client.get_forecast(self._latitude, self._longitude)
+            # Run blocking call in executor
+            forecast = await asyncio.to_thread(
+                self._client.get_forecast,
+                self._latitude,
+                self._longitude,
+            )
             hourly_forecasts = []
 
             for hourly in forecast.hourly_forecast:
@@ -122,7 +138,12 @@ class AromeClient:
         """
         try:
             # Get forecast for UV and other data
-            forecast = await self._client.get_forecast(self._latitude, self._longitude)
+            # Run blocking call in executor
+            forecast = await asyncio.to_thread(
+                self._client.get_forecast,
+                self._latitude,
+                self._longitude,
+            )
             current = forecast.current_forecast
             position = forecast.position
 

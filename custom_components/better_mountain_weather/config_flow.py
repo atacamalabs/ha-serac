@@ -1,6 +1,7 @@
 """Config flow for Better Mountain Weather integration."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any
 
@@ -98,7 +99,7 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                 # Test coordinates by fetching forecast
                 _LOGGER.debug("Fetching forecast for coordinates...")
-                forecast = await self.hass.async_add_executor_job(
+                forecast = await asyncio.to_thread(
                     client.get_forecast,
                     latitude,
                     longitude,
