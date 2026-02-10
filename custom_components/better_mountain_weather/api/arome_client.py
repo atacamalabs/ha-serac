@@ -199,6 +199,48 @@ class AromeClient:
             "wind_gust_today_max": max_wind_gust,
         }
 
+    def get_wind_forecasts(self, hourly_forecasts: list[dict[str, Any]]) -> dict[str, Any]:
+        """Calculate wind forecasts for tomorrow and day 2 from hourly forecasts.
+
+        Args:
+            hourly_forecasts: List of hourly forecast dictionaries
+
+        Returns:
+            Dictionary with max wind speed and gust for tomorrow and day 2
+        """
+        now = datetime.now(tz=timezone.utc)
+        today = now.date()
+        tomorrow = (now + timedelta(days=1)).date()
+        day_after = (now + timedelta(days=2)).date()
+
+        # Initialize max values
+        tomorrow_wind = 0
+        tomorrow_gust = 0
+        day2_wind = 0
+        day2_gust = 0
+
+        for forecast in hourly_forecasts:
+            # Parse datetime with timezone
+            forecast_dt = datetime.fromisoformat(forecast["datetime"])
+            forecast_date = forecast_dt.date()
+
+            wind_speed = forecast.get("wind_speed", 0) or 0
+            wind_gust = forecast.get("wind_gust_speed", 0) or 0
+
+            if forecast_date == tomorrow:
+                tomorrow_wind = max(tomorrow_wind, wind_speed)
+                tomorrow_gust = max(tomorrow_gust, wind_gust)
+            elif forecast_date == day_after:
+                day2_wind = max(day2_wind, wind_speed)
+                day2_gust = max(day2_gust, wind_gust)
+
+        return {
+            "wind_forecast_tomorrow_max": tomorrow_wind,
+            "gust_forecast_tomorrow_max": tomorrow_gust,
+            "wind_forecast_day2_max": day2_wind,
+            "gust_forecast_day2_max": day2_gust,
+        }
+
     @staticmethod
     def _map_condition(description: str | None) -> str:
         """Map Météo-France weather description to Home Assistant condition.

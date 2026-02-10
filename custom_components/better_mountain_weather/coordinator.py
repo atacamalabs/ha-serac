@@ -60,6 +60,9 @@ class AromeCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             # Calculate today's max wind from hourly forecast
             today_wind = self.client.get_today_max_wind(hourly_forecast)
 
+            # Calculate wind forecasts for tomorrow and day 2
+            wind_forecasts = self.client.get_wind_forecasts(hourly_forecast)
+
             # Combine all data
             data = {
                 "current": current_weather,
@@ -67,11 +70,14 @@ class AromeCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "hourly_forecast": hourly_forecast,
                 "elevation": additional_data.get("elevation", 0),
                 "uv_index": additional_data.get("uv_index", 0),
-                "air_quality": additional_data.get("air_quality"),
                 "sunrise": additional_data.get("sunrise"),
                 "sunset": additional_data.get("sunset"),
                 "wind_speed_today_max": today_wind.get("wind_speed_today_max", 0),
                 "wind_gust_today_max": today_wind.get("wind_gust_today_max", 0),
+                "wind_forecast_tomorrow_max": wind_forecasts.get("wind_forecast_tomorrow_max", 0),
+                "gust_forecast_tomorrow_max": wind_forecasts.get("gust_forecast_tomorrow_max", 0),
+                "wind_forecast_day2_max": wind_forecasts.get("wind_forecast_day2_max", 0),
+                "gust_forecast_day2_max": wind_forecasts.get("gust_forecast_day2_max", 0),
             }
 
             _LOGGER.debug(

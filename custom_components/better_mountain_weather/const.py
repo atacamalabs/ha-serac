@@ -90,6 +90,10 @@ SENSOR_TYPE_WIND_SPEED_CURRENT: Final = "wind_speed_current"
 SENSOR_TYPE_WIND_GUST_CURRENT: Final = "wind_gust_current"
 SENSOR_TYPE_WIND_SPEED_TODAY_MAX: Final = "wind_speed_today_max"
 SENSOR_TYPE_WIND_GUST_TODAY_MAX: Final = "wind_gust_today_max"
+SENSOR_TYPE_WIND_FORECAST_TOMORROW_MAX: Final = "wind_forecast_tomorrow_max"
+SENSOR_TYPE_GUST_FORECAST_TOMORROW_MAX: Final = "gust_forecast_tomorrow_max"
+SENSOR_TYPE_WIND_FORECAST_DAY2_MAX: Final = "wind_forecast_day2_max"
+SENSOR_TYPE_GUST_FORECAST_DAY2_MAX: Final = "gust_forecast_day2_max"
 
 # Sensor types for BRA (Phase 2)
 SENSOR_TYPE_AVALANCHE_RISK: Final = "avalanche_risk"
