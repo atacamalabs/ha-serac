@@ -204,6 +204,12 @@ class OpenMeteoClient:
                     sunrise = datetime.fromisoformat(sunrise_str) if sunrise_str else None
                     sunset = datetime.fromisoformat(sunset_str) if sunset_str else None
 
+                    # Ensure timezone awareness
+                    if sunrise and sunrise.tzinfo is None:
+                        sunrise = sunrise.replace(tzinfo=timezone.utc)
+                    if sunset and sunset.tzinfo is None:
+                        sunset = sunset.replace(tzinfo=timezone.utc)
+
                     # Fallback if not available
                     if not sunrise:
                         now = datetime.now(tz=timezone.utc)
