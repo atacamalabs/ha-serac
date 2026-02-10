@@ -84,7 +84,7 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             latitude = user_input[CONF_LATITUDE]
             longitude = user_input[CONF_LONGITUDE]
 
-            # Validate location and get place information
+            # Validate location and get forecast information
             try:
                 _LOGGER.debug(
                     "Validating location: lat=%s, lon=%s",
@@ -96,48 +96,41 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 client = MeteoFranceClient()
                 _LOGGER.debug("MeteoFranceClient initialized successfully")
 
-                # Search for nearest place
-                _LOGGER.debug("Searching for places near coordinates...")
-                places = await self.hass.async_add_executor_job(
-                    client.search_places,
+                # Test coordinates by fetching forecast
+                _LOGGER.debug("Fetching forecast for coordinates...")
+                forecast = await self.hass.async_add_executor_job(
+                    client.get_forecast,
                     latitude,
                     longitude,
                 )
-                _LOGGER.debug("Search completed, found %s places", len(places) if places else 0)
+                _LOGGER.debug("Forecast retrieved successfully")
 
-                if not places:
-                    _LOGGER.warning(
-                        "No places found for coordinates %s, %s - "
-                        "Make sure coordinates are within France or Andorra",
-                        latitude,
-                        longitude,
-                    )
-                    errors["base"] = "location_not_supported"
+                # Get location name from forecast or use coordinates
+                if hasattr(forecast, 'position') and forecast.position:
+                    location_name = forecast.position.get('name', f"Location {latitude:.2f}, {longitude:.2f}")
                 else:
-                    # Use the first (nearest) place
-                    place = places[0]
-                    location_name = place.name
+                    location_name = f"Location {latitude:.2f}, {longitude:.2f}"
 
-                    # Store location data
-                    self._data[CONF_LATITUDE] = latitude
-                    self._data[CONF_LONGITUDE] = longitude
-                    self._data[CONF_LOCATION_NAME] = location_name
+                # Store location data
+                self._data[CONF_LATITUDE] = latitude
+                self._data[CONF_LONGITUDE] = longitude
+                self._data[CONF_LOCATION_NAME] = location_name
 
-                    # Find nearest massif for Phase 2
-                    massif_id, massif_name = _find_nearest_massif(latitude, longitude)
-                    self._data[CONF_MASSIF_ID] = massif_id
-                    self._data[CONF_MASSIF_NAME] = massif_name
+                # Find nearest massif for Phase 2
+                massif_id, massif_name = _find_nearest_massif(latitude, longitude)
+                self._data[CONF_MASSIF_ID] = massif_id
+                self._data[CONF_MASSIF_NAME] = massif_name
 
-                    # Create the config entry
-                    await self.async_set_unique_id(
-                        f"{latitude}_{longitude}"
-                    )
-                    self._abort_if_unique_id_configured()
+                # Create the config entry
+                await self.async_set_unique_id(
+                    f"{latitude}_{longitude}"
+                )
+                self._abort_if_unique_id_configured()
 
-                    return self.async_create_entry(
-                        title=location_name,
-                        data=self._data,
-                    )
+                return self.async_create_entry(
+                    title=location_name,
+                    data=self._data,
+                )
 
             except Exception as err:
                 _LOGGER.error("Error validating location: %s", err, exc_info=True)

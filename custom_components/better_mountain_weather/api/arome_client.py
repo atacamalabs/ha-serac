@@ -6,7 +6,6 @@ import logging
 from typing import Any
 
 from meteofrance_api import MeteoFranceClient
-from meteofrance_api.model import Place
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,22 +31,6 @@ class AromeClient:
         self._client = MeteoFranceClient()
         self._latitude = latitude
         self._longitude = longitude
-        self._place: Place | None = None
-
-    async def async_update_place(self) -> None:
-        """Update the place information from coordinates."""
-        try:
-            places = await self._client.search_places(
-                self._latitude, self._longitude
-            )
-            if places:
-                self._place = places[0]
-                _LOGGER.debug("Updated place: %s", self._place.name)
-            else:
-                raise AromeApiError("No place found for coordinates")
-        except Exception as err:
-            _LOGGER.error("Error updating place: %s", err)
-            raise AromeApiError(f"Failed to update place: {err}") from err
 
     async def async_get_current_weather(self) -> dict[str, Any]:
         """Get current weather conditions.
@@ -55,11 +38,8 @@ class AromeClient:
         Returns:
             Dictionary with current weather data
         """
-        if not self._place:
-            await self.async_update_place()
-
         try:
-            forecast = await self._client.get_forecast_for_place(self._place)
+            forecast = await self._client.get_forecast(self._latitude, self._longitude)
             current = forecast.current_forecast
 
             return {
@@ -84,11 +64,8 @@ class AromeClient:
         Returns:
             List of daily forecast dictionaries
         """
-        if not self._place:
-            await self.async_update_place()
-
         try:
-            forecast = await self._client.get_forecast_for_place(self._place)
+            forecast = await self._client.get_forecast(self._latitude, self._longitude)
             daily_forecasts = []
 
             for daily in forecast.daily_forecast:
@@ -115,11 +92,8 @@ class AromeClient:
         Returns:
             List of hourly forecast dictionaries
         """
-        if not self._place:
-            await self.async_update_place()
-
         try:
-            forecast = await self._client.get_forecast_for_place(self._place)
+            forecast = await self._client.get_forecast(self._latitude, self._longitude)
             hourly_forecasts = []
 
             for hourly in forecast.hourly_forecast:
@@ -146,13 +120,11 @@ class AromeClient:
         Returns:
             Dictionary with additional weather data
         """
-        if not self._place:
-            await self.async_update_place()
-
         try:
             # Get forecast for UV and other data
-            forecast = await self._client.get_forecast_for_place(self._place)
+            forecast = await self._client.get_forecast(self._latitude, self._longitude)
             current = forecast.current_forecast
+            position = forecast.position
 
             # Calculate sunrise/sunset (simplified - in production use proper library)
             # For now, using reasonable defaults - this should be improved
@@ -161,7 +133,7 @@ class AromeClient:
             sunset = now.replace(hour=19, minute=0, second=0, microsecond=0)
 
             return {
-                "elevation": self._place.altitude if self._place.altitude else 0,
+                "elevation": position.get("altitude", 0) if position else 0,
                 "uv_index": getattr(current, "uv_index", 0),
                 "air_quality": None,  # Not provided by meteofrance-api
                 "sunrise": sunrise,
