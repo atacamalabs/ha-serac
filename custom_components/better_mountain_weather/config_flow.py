@@ -86,17 +86,27 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             # Validate location and get place information
             try:
+                _LOGGER.debug(
+                    "Validating location: lat=%s, lon=%s",
+                    latitude,
+                    longitude,
+                )
+
                 # Initialize client without authentication (free API)
                 client = MeteoFranceClient()
+                _LOGGER.debug("MeteoFranceClient initialized successfully")
 
                 # Search for nearest place
+                _LOGGER.debug("Searching for places near coordinates...")
                 places = await self.hass.async_add_executor_job(
                     client.search_places,
                     latitude,
                     longitude,
                 )
+                _LOGGER.debug("Search completed, found %s places", len(places) if places else 0)
 
                 if not places:
+                    _LOGGER.warning("No places found for coordinates %s, %s", latitude, longitude)
                     errors["base"] = "cannot_connect"
                 else:
                     # Use the first (nearest) place
@@ -125,14 +135,20 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
 
             except Exception as err:
-                _LOGGER.error("Error validating location: %s", err)
+                _LOGGER.error("Error validating location: %s", err, exc_info=True)
                 errors["base"] = "cannot_connect"
 
-        # Show the form
+        # Show the form with default values from HA configuration
         data_schema = vol.Schema(
             {
-                vol.Required(CONF_LATITUDE): cv.latitude,
-                vol.Required(CONF_LONGITUDE): cv.longitude,
+                vol.Required(
+                    CONF_LATITUDE,
+                    default=self.hass.config.latitude
+                ): cv.latitude,
+                vol.Required(
+                    CONF_LONGITUDE,
+                    default=self.hass.config.longitude
+                ): cv.longitude,
             }
         )
 
