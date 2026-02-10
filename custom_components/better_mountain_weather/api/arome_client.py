@@ -49,16 +49,16 @@ class AromeClient:
             current = forecast.current_forecast
 
             return {
-                "condition": self._map_condition(current.weather_description),
-                "temperature": current.temperature,
-                "humidity": current.relative_humidity,
-                "pressure": current.sea_level_pressure,
-                "wind_speed": current.wind_speed,
-                "wind_bearing": current.wind_direction,
-                "wind_gust": current.wind_gust,
-                "cloud_coverage": current.cloud_cover,
+                "condition": self._map_condition(current.get("weather", {}).get("desc")),
+                "temperature": current.get("T", {}).get("value"),
+                "humidity": current.get("humidity"),
+                "pressure": current.get("sea_level"),
+                "wind_speed": current.get("wind", {}).get("speed"),
+                "wind_bearing": current.get("wind", {}).get("direction"),
+                "wind_gust": current.get("wind", {}).get("gust"),
+                "cloud_coverage": current.get("clouds"),
                 "visibility": None,  # Not provided by meteofrance-api
-                "timestamp": current.timestamp,
+                "timestamp": current.get("dt"),
             }
         except Exception as err:
             _LOGGER.error("Error getting current weather: %s", err)
@@ -80,16 +80,19 @@ class AromeClient:
             daily_forecasts = []
 
             for daily in forecast.daily_forecast:
+                from datetime import datetime
+                dt = datetime.fromtimestamp(daily.get("dt", 0))
+
                 daily_forecasts.append({
-                    "datetime": daily.timestamp.isoformat(),
-                    "temperature": daily.temperature_max,
-                    "templow": daily.temperature_min,
-                    "precipitation": daily.total_precipitation,
-                    "precipitation_probability": daily.precipitation_probability,
-                    "condition": self._map_condition(daily.weather_description),
-                    "wind_speed": daily.wind_speed,
-                    "wind_gust_speed": daily.wind_gust,
-                    "wind_bearing": daily.wind_direction,
+                    "datetime": dt.isoformat(),
+                    "temperature": daily.get("T", {}).get("max"),
+                    "templow": daily.get("T", {}).get("min"),
+                    "precipitation": daily.get("precipitation", {}).get("24h", 0),
+                    "precipitation_probability": None,  # Not in dict
+                    "condition": self._map_condition(daily.get("weather12H", {}).get("desc")),
+                    "wind_speed": None,  # Not in daily forecast
+                    "wind_gust_speed": None,  # Not in daily forecast
+                    "wind_bearing": None,  # Not in daily forecast
                 })
 
             return daily_forecasts
@@ -112,17 +115,20 @@ class AromeClient:
             )
             hourly_forecasts = []
 
-            for hourly in forecast.hourly_forecast:
+            for hourly in forecast.forecast:  # Use forecast, not hourly_forecast
+                from datetime import datetime
+                dt = datetime.fromtimestamp(hourly.get("dt", 0))
+
                 hourly_forecasts.append({
-                    "datetime": hourly.timestamp.isoformat(),
-                    "temperature": hourly.temperature,
-                    "precipitation": hourly.precipitation,
-                    "precipitation_probability": hourly.precipitation_probability,
-                    "condition": self._map_condition(hourly.weather_description),
-                    "wind_speed": hourly.wind_speed,
-                    "wind_gust_speed": hourly.wind_gust,
-                    "wind_bearing": hourly.wind_direction,
-                    "cloud_coverage": hourly.cloud_cover,
+                    "datetime": dt.isoformat(),
+                    "temperature": hourly.get("T", {}).get("value"),
+                    "precipitation": hourly.get("rain", {}).get("1h", 0) + hourly.get("snow", {}).get("1h", 0),
+                    "precipitation_probability": None,  # Not in dict
+                    "condition": self._map_condition(hourly.get("weather", {}).get("desc")),
+                    "wind_speed": hourly.get("wind", {}).get("speed"),
+                    "wind_gust_speed": hourly.get("wind", {}).get("gust"),
+                    "wind_bearing": hourly.get("wind", {}).get("direction"),
+                    "cloud_coverage": hourly.get("clouds"),
                 })
 
             return hourly_forecasts
@@ -144,18 +150,24 @@ class AromeClient:
                 self._latitude,
                 self._longitude,
             )
-            current = forecast.current_forecast
             position = forecast.position
 
-            # Calculate sunrise/sunset (simplified - in production use proper library)
-            # For now, using reasonable defaults - this should be improved
-            now = datetime.now()
-            sunrise = now.replace(hour=7, minute=0, second=0, microsecond=0)
-            sunset = now.replace(hour=19, minute=0, second=0, microsecond=0)
+            # Get today's forecast for UV and sun times
+            today = forecast.today_forecast if hasattr(forecast, 'today_forecast') else {}
+
+            # Get sunrise/sunset from today's forecast
+            if today and "sun" in today:
+                sunrise = datetime.fromtimestamp(today["sun"].get("rise", 0))
+                sunset = datetime.fromtimestamp(today["sun"].get("set", 0))
+            else:
+                # Fallback to simplified calculation
+                now = datetime.now()
+                sunrise = now.replace(hour=7, minute=0, second=0, microsecond=0)
+                sunset = now.replace(hour=19, minute=0, second=0, microsecond=0)
 
             return {
                 "elevation": position.get("altitude", 0) if position else 0,
-                "uv_index": getattr(current, "uv_index", 0),
+                "uv_index": today.get("uv", 0) if today else 0,
                 "air_quality": None,  # Not provided by meteofrance-api
                 "sunrise": sunrise,
                 "sunset": sunset,
