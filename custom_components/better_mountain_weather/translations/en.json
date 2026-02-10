@@ -1,0 +1,38 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "A Better Mountain Weather",
+        "description": "Set up your mountain weather integration with AROME forecasts and BRA avalanche bulletins.",
+        "data": {
+          "arome_token": "AROME API Token",
+          "bra_token": "BRA API Token"
+        },
+        "data_description": {
+          "arome_token": "Get your AROME API key from the Météo-France API portal",
+          "bra_token": "Get your BRA API key for avalanche bulletin access"
+        }
+      },
+      "location": {
+        "title": "Location",
+        "description": "Enter the GPS coordinates for your mountain location.",
+        "data": {
+          "latitude": "Latitude",
+          "longitude": "Longitude"
+        },
+        "data_description": {
+          "latitude": "Latitude coordinate (e.g., 45.9237 for Chamonix)",
+          "longitude": "Longitude coordinate (e.g., 6.8694 for Chamonix)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid API token. Please check your credentials.",
+      "cannot_connect": "Unable to connect to Météo-France API. Please check your coordinates and try again.",
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "abort": {
+      "already_configured": "This location is already configured."
+    }
+  }
+}
