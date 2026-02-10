@@ -16,6 +16,7 @@
     },
     "error": {
       "cannot_connect": "Unable to connect to Météo-France API. Please check your coordinates and try again.",
+      "location_not_supported": "This location is not covered by Météo-France. This integration only works for locations in France (including French Alps and Pyrenees) and Andorra. Please enter coordinates within these regions.",
       "unknown": "An unexpected error occurred. Please try again."
     },
     "abort": {

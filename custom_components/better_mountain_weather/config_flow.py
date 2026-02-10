@@ -106,8 +106,13 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.debug("Search completed, found %s places", len(places) if places else 0)
 
                 if not places:
-                    _LOGGER.warning("No places found for coordinates %s, %s", latitude, longitude)
-                    errors["base"] = "cannot_connect"
+                    _LOGGER.warning(
+                        "No places found for coordinates %s, %s - "
+                        "Make sure coordinates are within France or Andorra",
+                        latitude,
+                        longitude,
+                    )
+                    errors["base"] = "location_not_supported"
                 else:
                     # Use the first (nearest) place
                     place = places[0]
