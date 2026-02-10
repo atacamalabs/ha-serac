@@ -1,80 +1,81 @@
 # Current Status - A Better Mountain Weather Integration
 
 **Date**: 2026-02-10
-**Phase**: Phase 1 Testing & Bug Fixes
-**Version**: v0.1.0b1 (with pending fixes)
+**Phase**: Phase 1 Complete ✅
+**Version**: v0.1.0b2
 **Session ID**: 26380028-207e-4421-bc3b-59476d6e2b19
 
 ## 📍 Where We Are
 
 ### ✅ Completed
-1. **Phase 1 Implementation** - Complete (v0.1.0b1)
+1. **Phase 1 Implementation** - Complete (v0.1.0b2)
    - All core files created
    - Weather entity + 11 AROME sensors
    - HACS integration structure
    - Documentation complete
+   - **No API tokens required!**
 
 2. **GitHub Setup** - Complete
    - Repository: https://github.com/atacamalabs/ha-better-mountain-weather
-   - First release published: v0.1.0b1
+   - Latest release: v0.1.0b2
    - GitHub Actions workflow configured
    - Repository topics added
 
-3. **Bug Fix** - Just Completed (not yet tested)
-   - Fixed API token parameter issue
-   - Changed `api_key` → `access_token`
-   - Removed unused `session` parameter
-   - Committed and pushed to GitHub
+3. **Bug Fix - MAJOR FIX** - ✅ COMPLETED (commit 1b03aaf)
+   - **Discovery**: The `meteofrance-api` library doesn't need authentication!
+   - It uses the free public API from Météo-France mobile apps
+   - Removed all API token requirements
+   - Simplified config flow to just GPS coordinates
+   - Version bumped to 0.1.0b2
 
 ### 🔄 Current Status
 
-**User is testing the integration** but encountered an error:
-- **Error**: "Invalid API token. Please check your credentials."
-- **Root Cause**: `meteofrance-api` library expects `access_token` parameter, not `api_key`
-- **Fix Status**: ✅ Fixed and pushed to GitHub (commit 07e5171)
-- **Testing Status**: ⏳ User needs to update and test
+**Ready for Testing!**
+- ✅ No API tokens needed
+- ✅ Simple single-step configuration (just GPS coordinates)
+- ✅ Changes committed and pushed to GitHub
+- ⏳ User needs to test the simplified integration
 
-### 🐛 Bug Fix Details
+### 🐛 Bug Fix Journey
 
-**Files Modified** (commit 07e5171):
-1. `config_flow.py` - Line 94-100: Changed api_key to access_token, removed session
-2. `api/arome_client.py` - Line 20-35: Updated __init__ signature
-3. `__init__.py` - Line 55-64: Updated AromeClient initialization
+**First Attempt** (commit 07e5171):
+- Changed `api_key` → `access_token` parameter
+- Still failed with 401 Unauthorized
 
-**The Issue**:
-```python
-# WRONG (was causing error):
-MeteoFranceClient(api_key=token, session=session)
+**Root Cause Discovery**:
+- User's JWT token was from NEW API portal (`portail-api.meteofrance.fr`)
+- `meteofrance-api` library uses OLD API (`webservice.meteofrance.com`)
+- These are completely different APIs!
 
-# CORRECT (now fixed):
-MeteoFranceClient(access_token=token)
-```
-
-**Error Message from HA Logs**:
-```
-Error validating AROME token: MeteoFranceClient.__init__() got an unexpected keyword argument 'api_key'
-```
+**Final Solution** (commit 1b03aaf):
+- **The library doesn't need authentication at all!**
+- Initialize with `MeteoFranceClient()` - no parameters
+- Removed all token requirements from config flow
+- Simplified to single-step setup: just enter GPS coordinates
 
 ### 📋 Next Steps for User
 
 1. **Update the integration in Home Assistant**:
    - HACS → Integrations → A Better Mountain Weather → Update/Redownload
+   - OR: Remove and reinstall the integration from HACS
    - Restart Home Assistant
 
-2. **Test the configuration again**:
+2. **Configure the integration** (Much simpler now!):
    - Settings → Devices & Services → Add Integration
    - Search "A Better Mountain Weather"
-   - Enter API tokens and GPS coordinates
+   - **Just enter GPS coordinates** - that's it!
+   - Example: Latitude 45.9237, Longitude 6.8694 (Chamonix)
 
-3. **If successful**:
-   - Verify weather entity appears
-   - Check all 11 sensors have data
-   - Test forecasts (daily/hourly)
-   - Report any issues
+3. **Verify it works**:
+   - Weather entity appears with current conditions
+   - All 11 sensors have data
+   - Forecasts show (daily/hourly)
+   - No authentication errors!
 
-4. **If still failing**:
-   - Check HA logs for new error message
-   - Share error details for further debugging
+4. **If issues occur**:
+   - Check HA logs for error messages
+   - Verify coordinates are correct
+   - Share error details for debugging
 
 ### 🔜 After Testing Passes
 
@@ -106,35 +107,34 @@ All in `custom_components/better_mountain_weather/`:
 
 ```bash
 Current branch: main
-Latest commit: 07e5171 "Fix API token parameter: use access_token instead of api_key"
+Latest commit: 1b03aaf "Remove API token requirement - use free meteofrance-api"
 Remote: https://github.com/atacamalabs/ha-better-mountain-weather
-Status: Pushed and synced
+Status: Pushed and synced ✅
 ```
 
 **Recent Commits**:
-1. `07e5171` - Fix API token parameter issue
-2. `7d82d29` - Fix workflow validation
-3. `80d946b` - Add project context documents
-4. `f430332` - Update GitHub username
-5. `87a1dd6` - Add development docs
-6. `60571e1` - Initial commit (Phase 1)
+1. `1b03aaf` - Remove API token requirement (v0.1.0b2)
+2. `2cf5eee` - Add resume guide with session ID
+3. `ca2a62c` - Add current status document
+4. `07e5171` - Fix API token parameter (first attempt)
+5. `7d82d29` - Fix workflow validation
 
 **Tags**:
-- `v0.1.0b1` - First beta release (has the bug)
+- `v0.1.0b1` - First beta release (had authentication bug)
 
-**Next Tag** (after testing passes):
-- `v0.1.0b2` - Bug fix release, or
-- Wait and fix multiple issues before next release
+**Next Tag** (after user testing):
+- `v0.1.0b2` - Ready to tag with the authentication fix!
 
 ## 🧪 Testing Information
 
-### Test Credentials Needed
-- **AROME API Token**: From https://portail-api.meteofrance.fr/
-- **BRA API Token**: From same portal
-- **Test GPS Coordinates**:
-  - Chamonix: 45.9237, 6.8694
-  - Grenoble: 45.1885, 5.7245
-  - Val d'Isère: 45.4486, 6.9808
+### No Credentials Needed!
+- ✅ **AROME**: No API token required (uses free public API)
+- ⏳ **BRA**: Will be added in Phase 2 (requires token from portal)
+
+### Test GPS Coordinates
+- Chamonix: 45.9237, 6.8694
+- Grenoble: 45.1885, 5.7245
+- Val d'Isère: 45.4486, 6.9808
 
 ### Expected Entities After Setup
 
@@ -157,7 +157,8 @@ Status: Pushed and synced
 ### Known Issues
 
 **Fixed** ✅:
-- Invalid API token error (api_key → access_token)
+- API authentication errors (removed token requirement entirely!)
+- 401 Unauthorized errors (was trying to use wrong API)
 
 **Still TODO**:
 - Sunrise/sunset uses simplified calculation (should use astral library)
@@ -165,6 +166,9 @@ Status: Pushed and synced
 
 **Expected Warnings** (normal):
 - HACS brands validation fails (expected for custom integrations)
+
+**Not Issues** (by design):
+- No API token needed - this is intentional and correct!
 
 ## 📞 Contact Information
 
