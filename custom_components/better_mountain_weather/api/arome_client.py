@@ -164,9 +164,9 @@ class AromeClient:
                 sunset = now.replace(hour=19, minute=0, second=0, microsecond=0)
 
             return {
-                "elevation": position.get("altitude", 0) if position else 0,
+                "elevation": position.get("alti", 0) if position else 0,
                 "uv_index": today.get("uv", 0) if today else 0,
-                "air_quality": None,  # Not provided by meteofrance-api
+                "air_quality": None,  # Not provided by Météo-France API
                 "sunrise": sunrise,
                 "sunset": sunset,
             }
