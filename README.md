@@ -47,7 +47,7 @@ A comprehensive Home Assistant integration providing detailed mountain weather d
 2. Click on "Integrations"
 3. Click the three dots in the top right corner
 4. Select "Custom repositories"
-5. Add this repository URL: `https://github.com/yourusername/ha-better-mountain-weather`
+5. Add this repository URL: `https://github.com/atacamalabs/ha-better-mountain-weather`
 6. Select category: "Integration"
 7. Click "Add"
 8. Find "A Better Mountain Weather" in HACS and click "Download"
@@ -202,8 +202,8 @@ Contributions are welcome! Please:
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ha-better-mountain-weather/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ha-better-mountain-weather/discussions)
+- **Issues**: [GitHub Issues](https://github.com/atacamalabs/ha-better-mountain-weather/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/atacamalabs/ha-better-mountain-weather/discussions)
 
 ## License
 
