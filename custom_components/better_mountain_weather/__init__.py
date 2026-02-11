@@ -50,6 +50,13 @@ async def async_migrate_entity_ids(hass: HomeAssistant, entry: ConfigEntry) -> N
         "sensor.station_de_ski_orange_mountain_weather_wind_gust_tomorrow_max",
         "sensor.station_de_ski_orange_mountain_weather_wind_day_2_max",
         "sensor.station_de_ski_orange_mountain_weather_wind_gust_day_2_max",
+        # Air quality Day 5 and Day 6 sensors (removed in v0.4.2)
+        f"sensor.{new_entity_id_base}_air_quality_index_max_day_5",
+        f"sensor.{new_entity_id_base}_air_quality_index_max_day_6",
+        f"sensor.{new_entity_id_base}_pm2_5_max_day_5",
+        f"sensor.{new_entity_id_base}_pm2_5_max_day_6",
+        f"sensor.{new_entity_id_base}_pm10_max_day_5",
+        f"sensor.{new_entity_id_base}_pm10_max_day_6",
     ]
 
     # Remove old unavailable sensors
