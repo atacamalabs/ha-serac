@@ -23,16 +23,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install homeassistant
-          pip install -r custom_components/better_mountain_weather/requirements.txt || true
+          pip install -r custom_components/serac/requirements.txt || true
 
       - name: Validate manifest
         run: |
-          python -c "import json; json.load(open('custom_components/better_mountain_weather/manifest.json'))"
+          python -c "import json; json.load(open('custom_components/serac/manifest.json'))"
 
       - name: Check Python syntax
         run: |
-          python -m py_compile custom_components/better_mountain_weather/*.py
-          python -m py_compile custom_components/better_mountain_weather/api/*.py
+          python -m py_compile custom_components/serac/*.py
+          python -m py_compile custom_components/serac/api/*.py
 
   hacs:
     runs-on: ubuntu-latest
