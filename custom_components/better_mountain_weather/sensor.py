@@ -68,6 +68,24 @@ from .coordinator import AromeCoordinator, BraCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 
+def _parse_bra_datetime(date_str: str | None) -> datetime | None:
+    """Parse BRA datetime string and add UTC timezone.
+
+    BRA dates are in format '2026-02-11 16:00:00' without timezone.
+    We assume UTC for consistency.
+    """
+    if not date_str:
+        return None
+    try:
+        # Parse the datetime string
+        dt = datetime.fromisoformat(date_str)
+        # Add UTC timezone
+        return dt.replace(tzinfo=dt_util.UTC)
+    except (ValueError, AttributeError) as err:
+        _LOGGER.warning("Failed to parse BRA datetime '%s': %s", date_str, err)
+        return None
+
+
 @dataclass
 class BetterMountainWeatherSensorDescription(SensorEntityDescription):
     """Class describing Better Mountain Weather sensor entities."""
@@ -481,7 +499,7 @@ BRA_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         name="Avalanche Bulletin Date",
         device_class=SensorDeviceClass.TIMESTAMP,
         icon="mdi:calendar-clock",
-        value_fn=lambda data: dt_util.parse_datetime(data.get("bulletin_date")) if data.get("has_data") and data.get("bulletin_date") else None,
+        value_fn=lambda data: _parse_bra_datetime(data.get("bulletin_date")) if data.get("has_data") else None,
         extra_attributes_fn=lambda data: {
             "massif": data.get("massif_name"),
         } if data.get("has_data") else {},
