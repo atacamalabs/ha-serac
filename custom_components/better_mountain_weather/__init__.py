@@ -34,9 +34,11 @@ async def async_migrate_entity_ids(hass: HomeAssistant, entry: ConfigEntry) -> N
     latitude = entry.data[CONF_LATITUDE]
     longitude = entry.data[CONF_LONGITUDE]
 
-    # Format coordinates for entity_id (replace dots with underscores)
-    lat_str = str(latitude).replace(".", "_")
-    lon_str = str(longitude).replace(".", "_")
+    # Format coordinates for entity_id (rounded to 2 decimals, replace dots with underscores)
+    lat_rounded = round(latitude, 2)
+    lon_rounded = round(longitude, 2)
+    lat_str = str(lat_rounded).replace(".", "_")
+    lon_str = str(lon_rounded).replace(".", "_")
     new_entity_id_base = f"location_{lat_str}_{lon_str}_mountain_weather"
 
     # Old sensors to remove completely (no longer exist in code)
