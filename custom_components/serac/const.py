@@ -34,17 +34,45 @@ MANUFACTURER: Final = "Météo-France"
 # French Alps and Pyrenees Massifs - Numeric IDs for BRA API
 # Format: numeric_id -> (Name, Text ID)
 MASSIF_IDS: Final = {
-    # Haute-Savoie (primary focus)
+    # Northern Alps (Haute-Savoie & Savoie)
     1: ("Chablais", "CHABLAIS"),
     2: ("Aravis", "ARAVIS"),
     3: ("Mont-Blanc", "MONT-BLANC"),
-    # Other Savoie massifs
     4: ("Bauges", "BAUGES"),
     5: ("Beaufortain", "BEAUFORTAIN"),
     6: ("Haute-Tarentaise", "HAUTE-TARENTAISE"),
+    7: ("Chartreuse", "CHARTREUSE"),
+    8: ("Belledonne", "BELLEDONNE"),
     9: ("Maurienne", "MAURIENNE"),
     10: ("Vanoise", "VANOISE"),
     11: ("Haute-Maurienne", "HAUTE-MAURIENNE"),
+    12: ("Grandes-Rousses", "GRANDES-ROUSSES"),
+    13: ("Thabor", "THABOR"),
+    14: ("Vercors", "VERCORS"),
+    15: ("Oisans", "OISANS"),
+    16: ("Pelvoux", "PELVOUX"),
+    # Southern Alps
+    17: ("Queyras", "QUEYRAS"),
+    18: ("Dévoluy", "DEVOLUY"),
+    19: ("Champsaur", "CHAMPSAUR"),
+    20: ("Embrunais-Parpaillon", "EMBRUNAIS-PARPAILLON"),
+    21: ("Ubaye", "UBAYE"),
+    22: ("Mercantour", "MERCANTOUR"),
+    23: ("Alpes-Azur", "ALPES-AZUR"),
+    # Pyrenees
+    40: ("Pays-Basque", "PAYS-BASQUE"),
+    41: ("Aspe-Ossau", "ASPE-OSSAU"),
+    42: ("Haute-Bigorre", "HAUTE-BIGORRE"),
+    43: ("Aure-Louron", "AURE-LOURON"),
+    44: ("Luchonnais", "LUCHONNAIS"),
+    45: ("Couserans", "COUSERANS"),
+    46: ("Haute-Ariège", "HAUTE-ARIEGE"),
+    47: ("Orlu-St-Barthélémy", "ORLU-ST-BARTHELEMY"),
+    48: ("Capcir-Puymorens", "CAPCIR-PUYMORENS"),
+    49: ("Cerdagne-Canigou", "CERDAGNE-CANIGOU"),
+    50: ("Andorre", "ANDORRE"),
+    # Corsica
+    70: ("Corse", "CORSE"),
 }
 
 # French Alps and Pyrenees Massifs - For distance calculation

@@ -111,14 +111,31 @@ For avalanche bulletins, you need a Météo-France BRA API token:
 
 ## Supported Massifs
 
-### Haute-Savoie & Savoie (11 Massifs)
+All French massifs are now supported for avalanche bulletins! 🎉
 
-Currently supported massifs for avalanche bulletins:
-- **Chablais** • **Aravis** • **Mont-Blanc**
-- **Bauges** • **Beaufortain** • **Haute-Tarentaise**
-- **Maurienne** • **Vanoise** • **Haute-Maurienne**
+### French Alps (23 Massifs)
 
-*More massifs across the Alps, Pyrenees, and Corsica coming in future updates.*
+**Northern Alps:**
+- Chablais • Aravis • Mont-Blanc • Bauges • Beaufortain
+- Haute-Tarentaise • Chartreuse • Belledonne • Maurienne
+- Vanoise • Haute-Maurienne • Grandes-Rousses • Thabor
+- Vercors • Oisans • Pelvoux
+
+**Southern Alps:**
+- Queyras • Dévoluy • Champsaur • Embrunais-Parpaillon
+- Ubaye • Mercantour • Alpes-Azur
+
+### Pyrenees (11 Massifs)
+
+- Pays-Basque • Aspe-Ossau • Haute-Bigorre • Aure-Louron
+- Luchonnais • Couserans • Haute-Ariège • Orlu-St-Barthélémy
+- Capcir-Puymorens • Cerdagne-Canigou • Andorre
+
+### Corsica (1 Massif)
+
+- Corse
+
+**Total: 35 massifs supported** across all French mountain ranges!
 
 ---
 
