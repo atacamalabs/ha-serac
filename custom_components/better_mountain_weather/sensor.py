@@ -247,7 +247,7 @@ class BetterMountainWeatherSensor(CoordinatorEntity[AromeCoordinator], SensorEnt
             identifiers={(DOMAIN, f"{self._latitude}_{self._longitude}")},
             name=f"{self._location_name} Mountain Weather",
             manufacturer=MANUFACTURER,
-            model="AROME Forecast",
+            model="Open-Meteo Forecast",
             entry_type=DeviceEntryType.SERVICE,
         )
 

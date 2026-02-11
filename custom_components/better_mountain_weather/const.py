@@ -26,7 +26,7 @@ API_TIMEOUT: Final = 30
 DEFAULT_NAME: Final = "Better Mountain Weather"
 
 # Attribution
-ATTRIBUTION: Final = "Data provided by Météo-France"
+ATTRIBUTION: Final = "Data from Open-Meteo (Météo-France AROME & ARPEGE models)"
 MANUFACTURER: Final = "Météo-France"
 
 # French Alps and Pyrenees Massifs

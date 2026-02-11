@@ -84,7 +84,7 @@ class BetterMountainWeather(CoordinatorEntity[AromeCoordinator], WeatherEntity):
         """Initialize the weather entity.
 
         Args:
-            coordinator: AROME data coordinator
+            coordinator: Data coordinator
             location_name: Name of the location
             latitude: Location latitude
             longitude: Location longitude
@@ -103,7 +103,7 @@ class BetterMountainWeather(CoordinatorEntity[AromeCoordinator], WeatherEntity):
             identifiers={(DOMAIN, f"{self._latitude}_{self._longitude}")},
             name=f"{self._location_name} Mountain Weather",
             manufacturer=MANUFACTURER,
-            model="AROME Forecast",
+            model="Open-Meteo Forecast",
             entry_type=DeviceEntryType.SERVICE,
         )
 
