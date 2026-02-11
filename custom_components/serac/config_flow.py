@@ -1,4 +1,4 @@
-"""Config flow for Better Mountain Weather integration."""
+"""Config flow for Serac integration."""
 from __future__ import annotations
 
 import logging
@@ -15,6 +15,7 @@ import homeassistant.helpers.config_validation as cv
 from .api.openmeteo_client import OpenMeteoClient, OpenMeteoApiError
 from .const import (
     CONF_BRA_TOKEN,
+    CONF_ENTITY_PREFIX,
     CONF_LOCATION_NAME,
     CONF_MASSIF_IDS,
     DOMAIN,
@@ -63,14 +64,47 @@ def _find_nearest_massif(latitude: float, longitude: float) -> tuple[str, str]:
     return nearest_massif_id, nearest_massif_name
 
 
-class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Better Mountain Weather."""
+class SeracConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for Serac."""
 
     VERSION = 1
 
     def __init__(self) -> None:
         """Initialize the config flow."""
         self._data: dict[str, Any] = {}
+
+    def _validate_prefix(self, prefix: str) -> bool:
+        """Validate entity prefix format.
+
+        Args:
+            prefix: The prefix to validate
+
+        Returns:
+            True if valid, False otherwise
+        """
+        import re
+        # Must be lowercase alphanumeric + underscores, start with letter, 1-20 chars
+        return bool(re.match(r'^[a-z][a-z0-9_]{0,19}$', prefix))
+
+    def _suggest_prefix(self, location_name: str) -> str:
+        """Suggest a prefix from location name.
+
+        Args:
+            location_name: The location name to derive prefix from
+
+        Returns:
+            Suggested prefix (lowercase, alphanumeric only)
+        """
+        import re
+        # Take first word, remove special characters, convert to lowercase
+        first_word = location_name.split()[0] if location_name else "mountain"
+        # Remove accents and special characters
+        slug = re.sub(r'[^a-zA-Z0-9]', '', first_word).lower()
+        # Ensure it starts with a letter
+        if slug and not slug[0].isalpha():
+            slug = "m" + slug
+        # Limit to 20 characters
+        return slug[:20] if slug else "mountain"
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -111,31 +145,12 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     self._data[CONF_LONGITUDE] = longitude
                     self._data[CONF_LOCATION_NAME] = location_name
 
-                    # Store selected massifs (can be empty list)
-                    selected_massifs = user_input.get(CONF_MASSIF_IDS, [])
-                    self._data[CONF_MASSIF_IDS] = selected_massifs
-
-                    # Store BRA token if provided (optional)
-                    if user_input.get(CONF_BRA_TOKEN):
-                        self._data[CONF_BRA_TOKEN] = user_input[CONF_BRA_TOKEN]
-
-                    # Create the config entry
-                    await self.async_set_unique_id(
-                        f"{latitude}_{longitude}"
-                    )
-                    self._abort_if_unique_id_configured()
-
-                    return self.async_create_entry(
-                        title=location_name,
-                        data=self._data,
-                    )
+                    # Proceed to prefix step
+                    return await self.async_step_prefix()
 
                 except Exception as err:
                     _LOGGER.error("Error validating location: %s", err, exc_info=True)
                     errors["base"] = "cannot_connect"
-
-        # Create massif options for multi-select
-        massif_options = {str(num_id): name for num_id, (name, _) in MASSIF_IDS.items()}
 
         # Show the form with default values from HA configuration
         data_schema = vol.Schema(
@@ -149,6 +164,90 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     CONF_LONGITUDE,
                     default=self.hass.config.longitude
                 ): cv.longitude,
+            }
+        )
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=data_schema,
+            errors=errors,
+            description_placeholders={
+                "location_name": "Enter a name for this location and its GPS coordinates",
+            },
+        )
+
+    async def async_step_prefix(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle entity prefix configuration."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            prefix = user_input[CONF_ENTITY_PREFIX].lower().strip()
+
+            # Validate prefix format
+            if not self._validate_prefix(prefix):
+                errors[CONF_ENTITY_PREFIX] = "invalid_prefix"
+            else:
+                # Store prefix and proceed to massifs step
+                self._data[CONF_ENTITY_PREFIX] = prefix
+                return await self.async_step_massifs()
+
+        # Generate suggested prefix from location name
+        suggested_prefix = self._suggest_prefix(self._data[CONF_LOCATION_NAME])
+
+        data_schema = vol.Schema(
+            {
+                vol.Required(
+                    CONF_ENTITY_PREFIX,
+                    default=suggested_prefix
+                ): str,
+            }
+        )
+
+        return self.async_show_form(
+            step_id="prefix",
+            data_schema=data_schema,
+            errors=errors,
+            description_placeholders={
+                "location_name": self._data[CONF_LOCATION_NAME],
+                "suggested_prefix": suggested_prefix,
+                "example_entity": f"sensor.serac_{suggested_prefix}_temperature",
+            },
+        )
+
+    async def async_step_massifs(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle massif selection and BRA token."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            # Store selected massifs (can be empty list)
+            selected_massifs = user_input.get(CONF_MASSIF_IDS, [])
+            self._data[CONF_MASSIF_IDS] = selected_massifs
+
+            # Store BRA token if provided (optional)
+            if user_input.get(CONF_BRA_TOKEN):
+                self._data[CONF_BRA_TOKEN] = user_input[CONF_BRA_TOKEN]
+
+            # Create the config entry
+            latitude = self._data[CONF_LATITUDE]
+            longitude = self._data[CONF_LONGITUDE]
+
+            await self.async_set_unique_id(f"{latitude}_{longitude}")
+            self._abort_if_unique_id_configured()
+
+            return self.async_create_entry(
+                title=self._data[CONF_LOCATION_NAME],
+                data=self._data,
+            )
+
+        # Create massif options for multi-select
+        massif_options = {str(num_id): name for num_id, (name, _) in MASSIF_IDS.items()}
+
+        data_schema = vol.Schema(
+            {
                 vol.Optional(
                     CONF_BRA_TOKEN,
                     description="Météo-France API key for avalanche bulletins (optional)"
@@ -161,10 +260,10 @@ class BetterMountainWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         return self.async_show_form(
-            step_id="user",
+            step_id="massifs",
             data_schema=data_schema,
             errors=errors,
             description_placeholders={
-                "location_info": "Enter location name and GPS coordinates. Optional: Add Météo-France API key and select massifs for avalanche data.",
+                "massif_info": "Optional: Add Météo-France BRA API token and select massifs for avalanche data. Leave empty to skip avalanche features.",
             },
         )

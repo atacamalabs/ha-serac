@@ -1,4 +1,4 @@
-"""Sensor platform for Better Mountain Weather integration."""
+"""Sensor platform for Serac integration."""
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -33,6 +33,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     ATTRIBUTION,
+    CONF_ENTITY_PREFIX,
     CONF_LOCATION_NAME,
     CONF_MASSIF_NAME,
     DOMAIN,
@@ -91,16 +92,16 @@ def _parse_bra_datetime(date_str: str | None) -> datetime | None:
 
 
 @dataclass
-class BetterMountainWeatherSensorDescription(SensorEntityDescription):
-    """Class describing Better Mountain Weather sensor entities."""
+class SeracSensorDescription(SensorEntityDescription):
+    """Class describing Serac sensor entities."""
 
     value_fn: Callable[[dict[str, Any]], StateType] = None
     extra_attributes_fn: Callable[[dict[str, Any]], dict[str, Any]] | None = None
 
 
 # Static sensors (not dependent on weather updates)
-STATIC_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
-    BetterMountainWeatherSensorDescription(
+STATIC_SENSORS: tuple[SeracSensorDescription, ...] = (
+    SeracSensorDescription(
         key=SENSOR_TYPE_ELEVATION,
         name="Elevation",
         native_unit_of_measurement=UnitOfLength.METERS,
@@ -111,8 +112,8 @@ STATIC_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
 )
 
 # Current weather sensors
-CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
-    BetterMountainWeatherSensorDescription(
+CURRENT_SENSORS: tuple[SeracSensorDescription, ...] = (
+    SeracSensorDescription(
         key=SENSOR_TYPE_TEMPERATURE_CURRENT,
         name="Temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -120,7 +121,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("current", {}).get("temperature"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_HUMIDITY,
         name="Humidity",
         native_unit_of_measurement=PERCENTAGE,
@@ -128,14 +129,14 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("current", {}).get("humidity"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_IS_DAY,
         name="Is Day",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:weather-sunny",
         value_fn=lambda data: "day" if data.get("current", {}).get("is_day") else "night",
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_WIND_SPEED_CURRENT,
         name="Wind Speed",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
@@ -144,7 +145,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         icon="mdi:weather-windy",
         value_fn=lambda data: data.get("current", {}).get("wind_speed"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_WIND_DIRECTION_CURRENT,
         name="Wind Direction",
         native_unit_of_measurement="°",
@@ -152,7 +153,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("current", {}).get("wind_bearing"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_WIND_GUST_CURRENT,
         name="Wind Gust",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
@@ -161,7 +162,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         icon="mdi:weather-windy-variant",
         value_fn=lambda data: data.get("current", {}).get("wind_gust"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_PRECIPITATION_CURRENT,
         name="Precipitation",
         native_unit_of_measurement=UnitOfLength.MILLIMETERS,
@@ -170,7 +171,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         icon="mdi:weather-pouring",
         value_fn=lambda data: data.get("current", {}).get("precipitation"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_RAIN_CURRENT,
         name="Rain",
         native_unit_of_measurement=UnitOfLength.MILLIMETERS,
@@ -179,7 +180,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         icon="mdi:weather-rainy",
         value_fn=lambda data: data.get("current", {}).get("rain"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_SHOWERS_CURRENT,
         name="Showers",
         native_unit_of_measurement=UnitOfLength.MILLIMETERS,
@@ -188,7 +189,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         icon="mdi:weather-partly-rainy",
         value_fn=lambda data: data.get("current", {}).get("showers"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_SNOWFALL_CURRENT,
         name="Snowfall",
         native_unit_of_measurement=UnitOfLength.CENTIMETERS,
@@ -197,7 +198,7 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         icon="mdi:weather-snowy",
         value_fn=lambda data: data.get("current", {}).get("snowfall"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_CLOUD_COVERAGE,
         name="Cloud Coverage",
         native_unit_of_measurement=PERCENTAGE,
@@ -208,8 +209,8 @@ CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
 )
 
 # Current air quality sensors
-AIR_QUALITY_CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
-    BetterMountainWeatherSensorDescription(
+AIR_QUALITY_CURRENT_SENSORS: tuple[SeracSensorDescription, ...] = (
+    SeracSensorDescription(
         key=SENSOR_TYPE_EUROPEAN_AQI,
         name="Air Quality Index",
         native_unit_of_measurement="EAQI",
@@ -217,7 +218,7 @@ AIR_QUALITY_CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] 
         icon="mdi:air-filter",
         value_fn=lambda data: data.get("air_quality", {}).get("current", {}).get("european_aqi"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_PM2_5,
         name="Particulate Matter 2.5",
         native_unit_of_measurement="µg/m³",
@@ -225,7 +226,7 @@ AIR_QUALITY_CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] 
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("air_quality", {}).get("current", {}).get("pm2_5"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_PM10,
         name="Particulate Matter 10",
         native_unit_of_measurement="µg/m³",
@@ -233,7 +234,7 @@ AIR_QUALITY_CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] 
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("air_quality", {}).get("current", {}).get("pm10"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_NITROGEN_DIOXIDE,
         name="Nitrogen Dioxide",
         native_unit_of_measurement="µg/m³",
@@ -242,7 +243,7 @@ AIR_QUALITY_CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] 
         icon="mdi:molecule",
         value_fn=lambda data: data.get("air_quality", {}).get("current", {}).get("nitrogen_dioxide"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_OZONE,
         name="Ozone",
         native_unit_of_measurement="µg/m³",
@@ -251,7 +252,7 @@ AIR_QUALITY_CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] 
         icon="mdi:molecule",
         value_fn=lambda data: data.get("air_quality", {}).get("current", {}).get("ozone"),
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_SULPHUR_DIOXIDE,
         name="Sulphur Dioxide",
         native_unit_of_measurement="µg/m³",
@@ -263,7 +264,7 @@ AIR_QUALITY_CURRENT_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] 
 )
 
 
-def _create_daily_aqi_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...]:
+def _create_daily_aqi_sensors() -> tuple[SeracSensorDescription, ...]:
     """Create daily air quality sensors for days 0-4 (5 days)."""
     sensors = []
     day_names = ["Today", "Tomorrow", "Day 2", "Day 3", "Day 4"]
@@ -272,7 +273,7 @@ def _create_daily_aqi_sensors() -> tuple[BetterMountainWeatherSensorDescription,
         day_name = day_names[day_idx]
 
         # European AQI Max
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"european_aqi_max_day{day_idx}",
             name=f"Air Quality Index Max {day_name}",
             native_unit_of_measurement="EAQI",
@@ -282,7 +283,7 @@ def _create_daily_aqi_sensors() -> tuple[BetterMountainWeatherSensorDescription,
         ))
 
         # PM2.5 Max
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"pm2_5_max_day{day_idx}",
             name=f"PM2.5 Max {day_name}",
             native_unit_of_measurement="µg/m³",
@@ -292,7 +293,7 @@ def _create_daily_aqi_sensors() -> tuple[BetterMountainWeatherSensorDescription,
         ))
 
         # PM10 Max
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"pm10_max_day{day_idx}",
             name=f"PM10 Max {day_name}",
             native_unit_of_measurement="µg/m³",
@@ -307,7 +308,7 @@ def _create_daily_aqi_sensors() -> tuple[BetterMountainWeatherSensorDescription,
 DAILY_AQI_SENSORS = _create_daily_aqi_sensors()
 
 
-def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...]:
+def _create_daily_sensors() -> tuple[SeracSensorDescription, ...]:
     """Create daily sensors for days 0, 1, 2."""
     sensors = []
     day_names = ["Today", "Tomorrow", "Day 2"]
@@ -316,7 +317,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         day_name = day_names[day_idx]
 
         # Wind Speed Max
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"wind_speed_max_day{day_idx}",
             name=f"Wind Speed Max {day_name}",
             native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
@@ -327,7 +328,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Wind Gust Max
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"wind_gust_max_day{day_idx}",
             name=f"Wind Gust Max {day_name}",
             native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
@@ -338,7 +339,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Wind Direction
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"wind_direction_day{day_idx}",
             name=f"Wind Direction {day_name}",
             native_unit_of_measurement="°",
@@ -348,7 +349,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Sunrise
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"sunrise_day{day_idx}",
             name=f"Sunrise {day_name}",
             device_class=SensorDeviceClass.TIMESTAMP,
@@ -357,7 +358,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Sunset
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"sunset_day{day_idx}",
             name=f"Sunset {day_name}",
             device_class=SensorDeviceClass.TIMESTAMP,
@@ -366,7 +367,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Sunshine Duration
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"sunshine_duration_day{day_idx}",
             name=f"Sunshine Duration {day_name}",
             native_unit_of_measurement=UnitOfTime.HOURS,
@@ -377,7 +378,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Daylight Duration
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"daylight_duration_day{day_idx}",
             name=f"Daylight Duration {day_name}",
             native_unit_of_measurement=UnitOfTime.HOURS,
@@ -388,7 +389,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # UV Index
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"uv_index_day{day_idx}",
             name=f"UV Index {day_name}",
             state_class=SensorStateClass.MEASUREMENT,
@@ -397,7 +398,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Rain Sum
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"rain_sum_day{day_idx}",
             name=f"Rain Sum {day_name}",
             native_unit_of_measurement=UnitOfLength.MILLIMETERS,
@@ -408,7 +409,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Showers Sum
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"showers_sum_day{day_idx}",
             name=f"Showers Sum {day_name}",
             native_unit_of_measurement=UnitOfLength.MILLIMETERS,
@@ -419,7 +420,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Snowfall Sum
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"snowfall_sum_day{day_idx}",
             name=f"Snowfall Sum {day_name}",
             native_unit_of_measurement=UnitOfLength.CENTIMETERS,
@@ -430,7 +431,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Precipitation Sum
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"precipitation_sum_day{day_idx}",
             name=f"Precipitation Sum {day_name}",
             native_unit_of_measurement=UnitOfLength.MILLIMETERS,
@@ -441,7 +442,7 @@ def _create_daily_sensors() -> tuple[BetterMountainWeatherSensorDescription, ...
         ))
 
         # Precipitation Hours
-        sensors.append(BetterMountainWeatherSensorDescription(
+        sensors.append(SeracSensorDescription(
             key=f"precipitation_hours_day{day_idx}",
             name=f"Precipitation Hours {day_name}",
             native_unit_of_measurement=UnitOfTime.HOURS,
@@ -458,8 +459,8 @@ DAILY_SENSORS = _create_daily_sensors()
 
 
 # BRA (Avalanche Bulletin) Sensors
-BRA_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
-    BetterMountainWeatherSensorDescription(
+BRA_SENSORS: tuple[SeracSensorDescription, ...] = (
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_RISK_TODAY,
         name="Avalanche Risk Today",
         icon="mdi:alert-octagon",
@@ -469,7 +470,7 @@ BRA_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
             "warning": data.get("warning"),
         } if data.get("has_data") else {},
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_RISK_TOMORROW,
         name="Avalanche Risk Tomorrow",
         icon="mdi:alert-octagon-outline",
@@ -480,25 +481,25 @@ BRA_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
             "comment": data.get("risk_j2_comment"),
         } if data.get("has_data") else {},
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_ACCIDENTAL,
         name="Avalanche Accidental Risk",
         icon="mdi:skiing",
         value_fn=lambda data: data.get("accidental_text") if data.get("has_data") else None,
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_NATURAL,
         name="Avalanche Natural Risk",
         icon="mdi:landslide",
         value_fn=lambda data: data.get("natural_text") if data.get("has_data") else None,
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_SUMMARY,
         name="Avalanche Risk Summary",
         icon="mdi:text-box-multiple",
         value_fn=lambda data: data.get("summary") if data.get("has_data") else None,
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_BULLETIN_DATE,
         name="Avalanche Bulletin Date",
         device_class=SensorDeviceClass.TIMESTAMP,
@@ -508,7 +509,7 @@ BRA_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
             "massif": data.get("massif_name"),
         } if data.get("has_data") else {},
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_RISK_HIGH_ALT,
         name="Avalanche Risk High Altitude",
         icon="mdi:image-filter-hdr",
@@ -517,7 +518,7 @@ BRA_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
             "altitude_limit": data.get("altitude_limit"),
         } if data.get("has_data") and data.get("altitude_limit") else {},
     ),
-    BetterMountainWeatherSensorDescription(
+    SeracSensorDescription(
         key=SENSOR_TYPE_AVALANCHE_RISK_LOW_ALT,
         name="Avalanche Risk Low Altitude",
         icon="mdi:terrain",
@@ -534,9 +535,10 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Better Mountain Weather sensors from a config entry."""
+    """Set up Serac sensors from a config entry."""
     coordinator: AromeCoordinator = hass.data[DOMAIN][entry.entry_id]["arome_coordinator"]
     location_name = entry.data[CONF_LOCATION_NAME]
+    entity_prefix = entry.data[CONF_ENTITY_PREFIX]
     latitude = entry.data[CONF_LATITUDE]
     longitude = entry.data[CONF_LONGITUDE]
 
@@ -545,32 +547,32 @@ async def async_setup_entry(
 
     # Add static sensors (elevation)
     for description in STATIC_SENSORS:
-        entities.append(BetterMountainWeatherSensor(
-            coordinator, description, location_name, latitude, longitude
+        entities.append(SeracSensor(
+            coordinator, description, location_name, entity_prefix, latitude, longitude
         ))
 
     # Add current weather sensors
     for description in CURRENT_SENSORS:
-        entities.append(BetterMountainWeatherSensor(
-            coordinator, description, location_name, latitude, longitude
+        entities.append(SeracSensor(
+            coordinator, description, location_name, entity_prefix, latitude, longitude
         ))
 
     # Add daily sensors
     for description in DAILY_SENSORS:
-        entities.append(BetterMountainWeatherSensor(
-            coordinator, description, location_name, latitude, longitude
+        entities.append(SeracSensor(
+            coordinator, description, location_name, entity_prefix, latitude, longitude
         ))
 
     # Add current air quality sensors
     for description in AIR_QUALITY_CURRENT_SENSORS:
-        entities.append(BetterMountainWeatherSensor(
-            coordinator, description, location_name, latitude, longitude
+        entities.append(SeracSensor(
+            coordinator, description, location_name, entity_prefix, latitude, longitude
         ))
 
     # Add daily air quality sensors
     for description in DAILY_AQI_SENSORS:
-        entities.append(BetterMountainWeatherSensor(
-            coordinator, description, location_name, latitude, longitude
+        entities.append(SeracSensor(
+            coordinator, description, location_name, entity_prefix, latitude, longitude
         ))
 
     # Add BRA (avalanche) sensors for each massif
@@ -579,24 +581,25 @@ async def async_setup_entry(
         massif_name = bra_coordinator.massif_name
         for description in BRA_SENSORS:
             entities.append(BraSensor(
-                bra_coordinator, description, location_name, latitude, longitude, massif_id, massif_name
+                bra_coordinator, description, location_name, entity_prefix, latitude, longitude, massif_id, massif_name
             ))
 
     async_add_entities(entities, True)
 
 
-class BetterMountainWeatherSensor(CoordinatorEntity[AromeCoordinator], SensorEntity):
-    """Sensor entity for Better Mountain Weather integration."""
+class SeracSensor(CoordinatorEntity[AromeCoordinator], SensorEntity):
+    """Sensor entity for Serac integration."""
 
-    entity_description: BetterMountainWeatherSensorDescription
-    _attr_has_entity_name = True
+    entity_description: SeracSensorDescription
+    _attr_has_entity_name = False
     _attr_attribution = ATTRIBUTION
 
     def __init__(
         self,
         coordinator: AromeCoordinator,
-        description: BetterMountainWeatherSensorDescription,
+        description: SeracSensorDescription,
         location_name: str,
+        entity_prefix: str,
         latitude: float,
         longitude: float,
     ) -> None:
@@ -606,24 +609,32 @@ class BetterMountainWeatherSensor(CoordinatorEntity[AromeCoordinator], SensorEnt
             coordinator: Data coordinator
             description: Sensor entity description
             location_name: Name of the location
+            entity_prefix: Prefix for entity ID
             latitude: Location latitude
             longitude: Location longitude
         """
         super().__init__(coordinator)
         self.entity_description = description
         self._location_name = location_name
+        self._entity_prefix = entity_prefix
         self._latitude = latitude
         self._longitude = longitude
-        self._attr_unique_id = f"{DOMAIN}_{latitude}_{longitude}_{description.key}"
+
+        # Set entity_id using new pattern: sensor.serac_{prefix}_{sensor_type}
+        self.entity_id = f"sensor.serac_{entity_prefix}_{description.key}"
+
+        # Unique ID uses coordinates for uniqueness
+        self._attr_unique_id = f"serac_{latitude}_{longitude}_{description.key}"
+        self._attr_name = description.name
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information about this sensor."""
         return DeviceInfo(
-            identifiers={(DOMAIN, f"{self._latitude}_{self._longitude}")},
-            name=f"{self._location_name} Mountain Weather",
+            identifiers={(DOMAIN, f"serac_{self._latitude}_{self._longitude}")},
+            name=f"{self._location_name} (Serac)",
             manufacturer=MANUFACTURER,
-            model="Open-Meteo Forecast",
+            model="Mountain Weather Station",
             entry_type=DeviceEntryType.SERVICE,
         )
 
@@ -651,15 +662,16 @@ class BetterMountainWeatherSensor(CoordinatorEntity[AromeCoordinator], SensorEnt
 class BraSensor(CoordinatorEntity[BraCoordinator], SensorEntity):
     """Sensor entity for BRA avalanche bulletins."""
 
-    entity_description: BetterMountainWeatherSensorDescription
-    _attr_has_entity_name = True
+    entity_description: SeracSensorDescription
+    _attr_has_entity_name = False
     _attr_attribution = "Data from Météo-France BRA"
 
     def __init__(
         self,
         coordinator: BraCoordinator,
-        description: BetterMountainWeatherSensorDescription,
+        description: SeracSensorDescription,
         location_name: str,
+        entity_prefix: str,
         latitude: float,
         longitude: float,
         massif_id: int,
@@ -669,41 +681,34 @@ class BraSensor(CoordinatorEntity[BraCoordinator], SensorEntity):
         super().__init__(coordinator)
         self.entity_description = description
         self._location_name = location_name
+        self._entity_prefix = entity_prefix
         self._latitude = latitude
         self._longitude = longitude
         self._massif_id = massif_id
         self._massif_name = massif_name
 
-        # Format coordinates for entity_id (rounded to 2 decimals)
-        lat_rounded = round(latitude, 2)
-        lon_rounded = round(longitude, 2)
-        lat_str = str(lat_rounded).replace(".", "_")
-        lon_str = str(lon_rounded).replace(".", "_")
+        # Create massif slug for entity_id (lowercase, replace spaces/hyphens with underscores)
+        massif_slug = massif_name.lower().replace(" ", "_").replace("-", "_")
 
-        # Set unique_id and entity_id base (include massif_id for uniqueness)
-        self._attr_unique_id = f"location_{lat_str}_{lon_str}_mountain_weather_{massif_id}_{description.key}"
+        # Set entity_id using new pattern: sensor.serac_{prefix}_{massif}_{sensor_type}
+        self.entity_id = f"sensor.serac_{entity_prefix}_{massif_slug}_{description.key}"
+
+        # Unique ID uses coordinates and massif_id for uniqueness
+        self._attr_unique_id = f"serac_{latitude}_{longitude}_{massif_id}_{description.key}"
+
+        # Name includes massif
+        self._attr_name = f"{description.name} - {massif_name}"
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information."""
-        lat_rounded = round(self._latitude, 2)
-        lon_rounded = round(self._longitude, 2)
-        lat_str = str(lat_rounded).replace(".", "_")
-        lon_str = str(lon_rounded).replace(".", "_")
-
         return DeviceInfo(
-            identifiers={(DOMAIN, f"location_{lat_str}_{lon_str}_massif_{self._massif_id}")},
-            name=f"{self._location_name} - {self._massif_name}",
+            identifiers={(DOMAIN, f"serac_{self._latitude}_{self._longitude}_massif_{self._massif_id}")},
+            name=f"{self._location_name} - {self._massif_name} (Serac)",
             manufacturer=MANUFACTURER,
-            model=f"BRA Avalanche Bulletin",
+            model="BRA Avalanche Bulletin",
             entry_type=DeviceEntryType.SERVICE,
         )
-
-    @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        # Add massif name to sensor name
-        return f"{self.entity_description.name} - {self._massif_name}"
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

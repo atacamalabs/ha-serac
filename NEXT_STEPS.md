@@ -1,304 +1,225 @@
-# Next Steps - Phase 3
+# Next Steps - Post v1.0.0
 
-**Created**: 2026-02-11
-**Current Version**: v0.6.0 ✅
-**Snapshot Branch**: `snapshot-v0.6.0` (rollback available)
+**Last Updated**: 2026-02-11
+**Current Version**: v1.0.0 ✅
+**Status**: Released - Planning future enhancements
 
-## 🎯 Immediate Tasks (User Requested)
+---
 
-### 1. Integration Rename 🔴 CRITICAL - BREAKING CHANGE
+## 🎉 v1.0.0 Release - COMPLETE
 
-**Current State:**
-- Domain: `better_mountain_weather`
-- All entity IDs include this domain
-- Hard-coded in multiple files
+Serac v1.0.0 has been successfully released with:
+- ✅ Complete rebrand to "Serac"
+- ✅ Repository renamed to `ha-serac`
+- ✅ Smart entity naming with user-defined prefixes
+- ✅ Improved 3-step config flow
+- ✅ Comprehensive documentation
+- ✅ Migration guide for v0.6.0 users
 
-**User Requirements:**
-- Change integration name (TBD - user to decide)
-- Knows this will break things
-- Willing to accept breaking change
+---
 
-**Impact Analysis:**
-```
-BREAKING CHANGES:
-- All entity IDs will change
-  Old: sensor.better_mountain_weather_temperature
-  New: sensor.{new_domain}_temperature
-- Users must REINSTALL integration completely
-- All automations must be updated
-- All dashboards must be updated
-- History data may be lost (entity ID change)
-```
+## 🚀 Future Enhancements
 
-**Files to Modify:**
-```
-1. manifest.json - "domain" field
-2. const.py - DOMAIN constant
-3. All entity_id references
-4. strings.json - Integration name
-5. README.md - Documentation
-```
+### Priority 1: Logo & Branding 🎨
 
-**Before Starting:**
-- [ ] User confirms new integration name
-- [ ] Create new snapshot branch before rename
-- [ ] Plan migration communication
-- [ ] Update README with migration guide
-- [ ] Consider creating a migration tool/script
+**Goal**: Add visual identity to Serac
 
-**Steps:**
-1. Get final decision on new name from user
-2. Create `snapshot-pre-rename` branch
-3. Update all domain references
-4. Test thoroughly
-5. Create v1.0.0 (major version bump for breaking change)
-6. Document migration in release notes
-7. Update all documentation
+**Tasks:**
+- [ ] Design or source a logo (mountain/ice/weather themed)
+- [ ] Create 256×256 PNG with transparency
+- [ ] Add logo to README.md header
+- [ ] Add icon.png to integration folder
+- [ ] Update HACS listing appearance
 
-**Estimated Effort:** 2-3 hours (careful testing required)
+**Estimated effort**: 1-2 hours (once logo is ready)
 
-### 2. Add Logo/Branding 🟡 HIGH PRIORITY
+---
 
-**Requirements:**
-- Custom logo for integration
-- Icon for HACS listing
-- Consistent branding
+### Priority 2: Options Flow ⚙️
 
-**Files to Add/Modify:**
-```
-1. /custom_components/better_mountain_weather/icon.png
-   - Size: 256x256 or 512x512
-   - Format: PNG with transparency
+**Goal**: Allow users to change configuration without reinstalling
 
-2. manifest.json
-   - Add icon reference if needed
-
-3. README.md
-   - Add logo to header
-```
-
-**Design Considerations:**
-- Mountain theme (Alps)
-- Weather elements
-- Avalanche/snow reference
-- Clean, modern design
-- Works in dark/light mode
-
-**Before Starting:**
-- [ ] User provides logo design or direction
-- [ ] Determine size/format requirements
-- [ ] Check HACS branding guidelines
-
-**Estimated Effort:** 1 hour (once logo is provided)
-
-### 3. Phase 3 Fine-tuning 🟢 ONGOING
-
-**Performance Optimization:**
-- [ ] Monitor API response times
-- [ ] Optimize parallel API calls
-- [ ] Cache frequently accessed data
-- [ ] Review update intervals
-
-**Reliability Improvements:**
-- [ ] Enhanced error handling
-- [ ] Retry logic for failed API calls
-- [ ] Better logging for diagnostics
-- [ ] Graceful degradation
-
-**User Experience:**
-- [ ] Options flow (change massifs without reinstalling)
-- [ ] Better config flow descriptions
-- [ ] Input validation improvements
-- [ ] Help text and tooltips
-
-**Documentation:**
-- [ ] Complete README with screenshots
-- [ ] BRA API token acquisition guide
-- [ ] Migration guide (v0.5.x → v0.6.0)
-- [ ] Migration guide (v0.6.0 → v1.0.0 after rename)
-- [ ] Troubleshooting guide
-- [ ] Developer documentation
-
-## 📋 Detailed Task Breakdown
-
-### Options Flow Implementation
-
-**Goal:** Allow changing massifs without removing/re-adding integration
+**Features:**
+- Change selected massifs
+- Add/remove BRA token
+- (Optional) Change entity prefix - requires entity migration
 
 **Implementation:**
 ```python
 # config_flow.py
-async def async_step_init(self, user_input=None):
-    """Manage the options."""
-    if user_input is not None:
-        # Update massif_ids in config entry
-        return self.async_create_entry(title="", data=user_input)
-
-    # Show current massif selection
-    return self.async_show_form(
-        step_id="init",
-        data_schema=vol.Schema({
-            vol.Optional(CONF_MASSIF_IDS): cv.multi_select(massif_options),
-        })
-    )
+class SeracOptionsFlow(config_entries.OptionsFlow):
+    async def async_step_init(self, user_input=None):
+        """Manage options."""
+        # Show massif multi-select
+        # Allow BRA token update
+        # Handle coordinator reload
 ```
 
-**Files to Modify:**
-- config_flow.py (add OptionsFlowHandler class)
-- __init__.py (handle config entry updates, reload coordinators)
+**Files to modify:**
+- `config_flow.py` - Add OptionsFlowHandler class
+- `__init__.py` - Handle config entry updates, reload coordinators
 
-**Estimated Effort:** 2-3 hours
+**Estimated effort**: 2-3 hours
 
-### Enhanced Documentation
+---
 
-**README Structure:**
-```markdown
-# {Integration Name}
+### Priority 3: Expand Massif Support 🗺️
 
-[Logo]
+**Goal**: Support all French massifs for avalanche bulletins
 
-## Overview
-- What it does
-- Key features
-- Data sources
+**Current**: 11 massifs (Haute-Savoie/Savoie)
+**Target**: 40+ massifs (all of France)
 
-## Installation
-1. HACS installation steps
-2. Configuration steps
-3. BRA API token setup
+**Massif groups to add:**
+- **Northern Alps** (12 more): Chartreuse, Belledonne, Vercors, Oisans, etc.
+- **Southern Alps** (6): Queyras, Dévoluy, Champsaur, Ubaye, Mercantour, etc.
+- **Pyrenees** (16): All Pyrenees massifs
+- **Corsica** (1): Corse
 
-## Configuration
-- Location naming
-- Massif selection
-- Screenshots
+**Implementation:**
+- Update `MASSIF_IDS` in `const.py`
+- Test BRA API with new massif IDs
+- Update documentation
 
-## Features
-- Weather sensors
-- Air quality
-- Avalanche bulletins
+**Estimated effort**: 2-3 hours
 
-## Troubleshooting
-- Common issues
-- Log analysis
-- Support channels
+---
 
-## Migration Guides
-- v0.5.x → v0.6.0
-- v0.6.0 → v1.0.0 (rename)
+### Priority 4: Enhanced Documentation 📚
 
-## Credits & License
-```
+**Improvements needed:**
+- [ ] Add screenshots to README
+  - Config flow steps
+  - Weather card example
+  - Sensor cards
+  - Avalanche risk display
+- [ ] Create troubleshooting guide with common issues
+- [ ] Add FAQ section
+- [ ] Developer documentation for contributors
+- [ ] French translation (translations/fr.json)
 
-**Estimated Effort:** 3-4 hours
+**Estimated effort**: 3-4 hours
 
-## 🚀 Recommended Workflow
+---
 
-### Session 1: Integration Rename
-1. User confirms new name
-2. Create snapshot branch
-3. Implement rename
-4. Test thoroughly
-5. Release v1.0.0
+### Nice-to-Have Features
 
-### Session 2: Branding
-1. Add logo
-2. Update documentation with visuals
-3. Improve integration appearance
+#### Diagnostics Support
+- Add `diagnostics.py` file
+- Export configuration (redact tokens)
+- Include coordinator status
+- Sample API responses
+- Update history
 
-### Session 3: Options Flow
-1. Implement options handler
-2. Test massif changes
-3. Release v1.1.0
+#### Enhanced Error Handling
+- Retry logic with exponential backoff
+- Better rate limit detection
+- User-friendly error messages
+- Network timeout improvements
 
-### Session 4: Documentation Sprint
-1. Complete README
-2. Write migration guides
-3. Create troubleshooting docs
-4. Add developer docs
+#### Advanced Features
+- Hourly avalanche risk evolution
+- Snow depth sensors (if data available)
+- Avalanche bulletin PDF links
+- Weather alerts/warnings
+- Custom update intervals
+- Historical data tracking
 
-## ⚠️ Important Notes
+#### Multi-language Support
+- French UI (translations/fr.json)
+- German UI (for Swiss Alps users)
+- Italian UI (for Italian Alps users)
 
-### Breaking Change Communication
+---
 
-When releasing the rename (v1.0.0):
-```markdown
-## 🚨 BREAKING CHANGE - v1.0.0
+## 🐛 Known Issues to Address
 
-This release renames the integration from "Better Mountain Weather" to "{New Name}".
+### Current Limitations
+1. **No options flow** - Must reinstall to change massifs
+   - Solution: Implement options flow (Priority 2)
 
-**REQUIRED ACTIONS:**
-1. REMOVE the old integration completely
-2. RESTART Home Assistant
-3. INSTALL the new version
-4. RECONFIGURE from scratch
-5. UPDATE all automations with new entity IDs
-6. UPDATE all dashboards with new entity IDs
+2. **Limited massif coverage** - Only 11 massifs
+   - Solution: Expand support (Priority 3)
 
-**Entity ID Changes:**
-- Old: sensor.better_mountain_weather_*
-- New: sensor.{new_domain}_*
+3. **No logo** - Generic appearance in HACS
+   - Solution: Add branding (Priority 1)
 
-**Why this change?**
-[Explain the rationale]
+---
 
-**Need help?** See the migration guide: [link]
-```
+## 📊 Success Metrics
 
-### Snapshot Branch Usage
+### v1.0.0 Goals (Achieved ✅)
+- [x] Clean entity naming
+- [x] Professional branding
+- [x] Comprehensive documentation
+- [x] Migration guide for existing users
+- [x] Breaking changes communicated clearly
 
-**When to create snapshots:**
-- Before major refactoring
-- Before breaking changes
-- Before risky operations
+### v1.1.0 Goals (Options Flow)
+- [ ] Users can change massifs without reinstalling
+- [ ] BRA token can be added/removed easily
+- [ ] No breaking changes
+- [ ] Backward compatible with v1.0.0
 
-**Naming convention:**
-- `snapshot-v{version}` - Release snapshots
-- `snapshot-pre-{feature}` - Before major feature
+### v1.2.0 Goals (Full Coverage)
+- [ ] All 40+ French massifs supported
+- [ ] Logo and branding complete
+- [ ] Enhanced documentation with screenshots
+- [ ] Troubleshooting guide available
 
-**How to rollback:**
-```bash
-git checkout snapshot-v0.6.0
-git checkout -b rollback-main
-# Test
-git push -f origin main  # Only if confirmed
-```
+---
 
-## 📊 Success Criteria
+## 🔗 Related Documentation
 
-### Integration Rename
-- [ ] All tests pass
-- [ ] No hard-coded old domain references
-- [ ] Documentation updated
-- [ ] Migration guide published
-- [ ] Release notes comprehensive
-
-### Logo/Branding
-- [ ] Logo displays correctly in HACS
-- [ ] Logo displays in HA integrations page
-- [ ] README looks professional
-- [ ] Consistent visual identity
-
-### Phase 3 Completion
-- [ ] Options flow working
-- [ ] Documentation complete
-- [ ] Performance optimized
-- [ ] Reliability improvements tested
-- [ ] User feedback positive
-
-## 🔗 Related Files
-
-- **PROJECT_STATUS.md** - Complete project overview
-- **DEVELOPMENT.md** - Development guidelines (if exists)
+- **PROJECT_STATUS.md** - Current implementation status
 - **README.md** - User-facing documentation
-- **manifest.json** - Integration metadata
+- **MIGRATION_v1.md** - Migration guide from v0.6.0
+- **DEVELOPMENT.md** - Development guidelines (if exists)
 
-## 📝 Notes from User
+---
 
-> "I will need to:
-> - Change the name of the integration (I know it will break things)
-> - Add a logo
-> - Work on fine-tuning everything to make sure things run smoothly (as planned in Phase 3)"
+## 📝 Notes for Future Development
 
-**Status:** User has tested v0.6.0, everything working ✅
-**Snapshot:** Created `snapshot-v0.6.0` for safety ✅
-**Next:** Awaiting user input on new integration name
+### Breaking Changes to Avoid
+- Don't change domain again
+- Don't change entity ID patterns
+- Keep config data structure backward compatible
+- Use entity migration for structural changes
+
+### Best Practices
+- Always test with multiple massif configurations (0, 1, multiple)
+- Check out-of-season BRA behavior
+- Verify timezone handling
+- Test entity prefix validation
+- Document all breaking changes clearly
+
+### Community Feedback
+- Monitor GitHub issues for feature requests
+- Track most requested features
+- Prioritize based on user needs
+- Engage with Home Assistant community
+
+---
+
+## 🎯 Immediate Next Actions
+
+1. **Monitor v1.0.0 release**
+   - Watch for issues from users migrating
+   - Respond to questions quickly
+   - Fix critical bugs promptly (v1.0.1 hotfix if needed)
+
+2. **Plan next release**
+   - Decide: Logo first or Options flow first?
+   - Create milestone for v1.1.0
+   - Gather feedback from community
+
+3. **Improve visibility**
+   - Post to Home Assistant community forum
+   - Share in relevant subreddits (r/homeassistant)
+   - Update HACS listing if possible
+
+---
+
+**Status**: v1.0.0 released successfully 🎉
+
+**Next milestone**: v1.1.0 (Options Flow) or v1.1.0 (Logo & Branding)

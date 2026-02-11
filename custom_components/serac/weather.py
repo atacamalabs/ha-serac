@@ -1,4 +1,4 @@
-"""Weather platform for Better Mountain Weather integration."""
+"""Weather platform for Serac integration."""
 from __future__ import annotations
 
 from datetime import datetime
@@ -35,6 +35,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
     ATTRIBUTION,
+    CONF_ENTITY_PREFIX,
     CONF_LOCATION_NAME,
     DOMAIN,
     MANUFACTURER,
@@ -49,23 +50,23 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Better Mountain Weather weather entity from a config entry."""
+    """Set up Serac weather entity from a config entry."""
     coordinator: AromeCoordinator = hass.data[DOMAIN][entry.entry_id]["arome_coordinator"]
     location_name = entry.data[CONF_LOCATION_NAME]
+    entity_prefix = entry.data[CONF_ENTITY_PREFIX]
     latitude = entry.data[CONF_LATITUDE]
     longitude = entry.data[CONF_LONGITUDE]
 
     async_add_entities(
-        [BetterMountainWeather(coordinator, location_name, latitude, longitude)],
+        [SeracWeather(coordinator, location_name, entity_prefix, latitude, longitude)],
         True,
     )
 
 
-class BetterMountainWeather(CoordinatorEntity[AromeCoordinator], WeatherEntity):
-    """Weather entity for Better Mountain Weather integration."""
+class SeracWeather(CoordinatorEntity[AromeCoordinator], WeatherEntity):
+    """Weather entity for Serac integration."""
 
-    _attr_has_entity_name = True
-    _attr_name = None
+    _attr_has_entity_name = False
     _attr_native_precipitation_unit = UnitOfLength.MILLIMETERS
     _attr_native_pressure_unit = UnitOfPressure.HPA
     _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
@@ -78,6 +79,7 @@ class BetterMountainWeather(CoordinatorEntity[AromeCoordinator], WeatherEntity):
         self,
         coordinator: AromeCoordinator,
         location_name: str,
+        entity_prefix: str,
         latitude: float,
         longitude: float,
     ) -> None:
@@ -86,24 +88,32 @@ class BetterMountainWeather(CoordinatorEntity[AromeCoordinator], WeatherEntity):
         Args:
             coordinator: Data coordinator
             location_name: Name of the location
+            entity_prefix: Prefix for entity ID
             latitude: Location latitude
             longitude: Location longitude
         """
         super().__init__(coordinator)
         self._location_name = location_name
+        self._entity_prefix = entity_prefix
         self._latitude = latitude
         self._longitude = longitude
-        self._attr_unique_id = f"{DOMAIN}_{latitude}_{longitude}_weather"
+
+        # Set entity_id using new pattern: weather.serac_{prefix}
+        self.entity_id = f"weather.serac_{entity_prefix}"
+
+        # Unique ID uses coordinates for uniqueness
+        self._attr_unique_id = f"serac_{latitude}_{longitude}_weather"
+        self._attr_name = location_name
         self._attr_attribution = ATTRIBUTION
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information about this weather entity."""
         return DeviceInfo(
-            identifiers={(DOMAIN, f"{self._latitude}_{self._longitude}")},
-            name=f"{self._location_name} Mountain Weather",
+            identifiers={(DOMAIN, f"serac_{self._latitude}_{self._longitude}")},
+            name=f"{self._location_name} (Serac)",
             manufacturer=MANUFACTURER,
-            model="Open-Meteo Forecast",
+            model="Mountain Weather Station",
             entry_type=DeviceEntryType.SERVICE,
         )
 

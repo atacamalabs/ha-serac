@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Serac - Location",
+        "description": "Enter a name for your location and its GPS coordinates to get weather forecasts.",
+        "data": {
+          "location_name": "Location Name",
+          "latitude": "Latitude",
+          "longitude": "Longitude"
+        },
+        "data_description": {
+          "location_name": "A name for this location (e.g., 'Chamonix Mont-Blanc')",
+          "latitude": "Latitude coordinate (e.g., 45.9237 for Chamonix)",
+          "longitude": "Longitude coordinate (e.g., 6.8694 for Chamonix)"
+        }
+      },
+      "prefix": {
+        "title": "Entity ID Prefix",
+        "description": "Choose a short identifier for your entities. This will be used in entity IDs like 'sensor.serac_{entity_prefix}_temperature'. Suggested: {suggested_prefix}\n\nExample entity: {example_entity}",
+        "data": {
+          "entity_prefix": "Entity Prefix"
+        },
+        "data_description": {
+          "entity_prefix": "Lowercase letters, numbers, and underscores only. Must start with a letter."
+        }
+      },
+      "massifs": {
+        "title": "Avalanche Data (Optional)",
+        "description": "Optionally add Météo-France BRA API token and select massifs for avalanche bulletins. You can skip this step if you only want weather data.",
+        "data": {
+          "bra_token": "BRA API Token (optional)",
+          "massif_ids": "Select Massifs (optional)"
+        },
+        "data_description": {
+          "bra_token": "Météo-France API key for avalanche bulletins",
+          "massif_ids": "Select one or more massifs for avalanche risk data"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to weather API. Please check your coordinates and try again.",
+      "location_not_supported": "This location is not covered. This integration works for locations in France and Andorra.",
+      "invalid_prefix": "Invalid prefix. Must start with a letter and contain only lowercase letters, numbers, and underscores (1-20 characters).",
+      "required": "This field is required.",
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "abort": {
+      "already_configured": "This location is already configured."
+    }
+  }
+}

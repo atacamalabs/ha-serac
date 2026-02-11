@@ -1,44 +1,69 @@
-# Better Mountain Weather Integration - Project Status
+# Serac Integration - Project Status
 
 **Last Updated**: 2026-02-11
-**Current Version**: v0.6.0
-**Status**: Phase 2 Complete ✅, Ready for Phase 3
-**Snapshot Branch**: `snapshot-v0.6.0` (stable fallback)
+**Current Version**: v1.0.0 🎉
+**Status**: v1.0.0 Release Complete ✅
+**Repository**: https://github.com/atacamalabs/ha-serac
 
-## 🎯 Quick Start for Next Session
+## 🎯 Quick Overview
 
-1. **Read this file first** - Complete project overview
-2. **Check NEXT_STEPS.md** - Immediate action items
-3. **Review recent commits**: `git log --oneline -10`
-4. **Test status**: All features working, user has tested v0.6.0 ✅
-
-## 📦 Project Overview
-
-Home Assistant custom integration providing:
+Serac (formerly "Better Mountain Weather") is a Home Assistant integration providing:
 - **Weather data**: Météo-France AROME/ARPEGE models via Open-Meteo API
 - **Air quality**: European AQI and pollutant sensors (5-day forecast)
 - **Avalanche bulletins**: Météo-France BRA for French Alps (multiple massifs supported)
 
-**Repository**: https://github.com/atacamalabs/ha-better-mountain-weather
 **Installation**: HACS custom repository
 
-## ✅ Phase 1: Core Weather Integration (COMPLETE)
+---
 
-### Features
-- Open-Meteo API integration (AROME & ARPEGE models)
+## ✅ Version 1.0.0 - Complete Rebrand (RELEASED)
+
+### 🎉 What's New in v1.0.0
+
+**Major Changes:**
+- 🏔️ **Rebranded to "Serac"** - New name, new identity
+- 🆔 **Smart Entity Naming** - User-defined prefixes for clean entity IDs
+- 📦 **Repository Renamed** - `ha-serac` (GitHub auto-redirects from old URL)
+- 🎨 **Improved UX** - 3-step config flow with entity prefix selection
+
+**Breaking Changes:**
+- ⚠️ All entity IDs changed (old coordinate-based → new prefix-based)
+- ⚠️ Domain changed: `better_mountain_weather` → `serac`
+- ⚠️ Users must reinstall (see MIGRATION_v1.md)
+
+### Entity Naming Pattern
+
+**User chooses prefix during setup:**
+- Weather: `sensor.serac_{prefix}_temperature`
+- Avalanche: `sensor.serac_{prefix}_{massif}_avalanche_risk_today`
+- Weather entity: `weather.serac_{prefix}`
+
+**Example with prefix "chamonix":**
+```
+sensor.serac_chamonix_temperature
+sensor.serac_chamonix_aravis_avalanche_risk_today
+weather.serac_chamonix
+```
+
+---
+
+## 📦 Current Features (v1.0.0)
+
+### Phase 1 & 2: Complete ✅
+
+**Weather Integration:**
+- Open-Meteo API (AROME & ARPEGE models)
 - Weather entity with 7-day forecast
 - **51 sensors total**:
   - 1 static sensor (elevation)
   - 11 current weather sensors
   - 39 daily sensors (3 days × 13 parameters)
-- Air quality sensors (AQI, PM2.5, PM10, NO2, O3, SO2) - 5-day forecast
-- Hourly precipitation forecasts (6-hour and 48-hour)
+- Air quality sensors (AQI, PM2.5, PM10, NO₂, O₃, SO₂) - 5-day forecast
+- Hourly precipitation forecasts
 - Parallel API calls for performance
 - ~158 weather entity attributes with units
 
-## ✅ Phase 2: BRA Avalanche Integration (COMPLETE)
-
-### Features
+**BRA Avalanche Integration:**
 - **8 avalanche sensors per massif**:
   - Risk Today/Tomorrow (1-5 scale)
   - Risk High/Low Altitude
@@ -52,27 +77,29 @@ Home Assistant custom integration providing:
 - Graceful out-of-season handling
 - 6-hour update intervals
 
-### Technical Implementation
-```
-Files Modified:
-- api/bra_client.py: BRA API with OAuth2/API key auth, Europe/Paris timezone
-- coordinator.py: Multiple BraCoordinators (one per massif)
-- sensor.py: BraSensor with massif-specific devices
-- config_flow.py: Custom location name + massif multi-select
-- __init__.py: Multiple coordinator management + entity migration
-- const.py: MASSIF_IDS mapping, CONF_MASSIF_IDS constant
-```
+### Phase 3: Complete ✅
 
-## 🏗️ Current Architecture
+**Polish & Rebrand:**
+- ✅ Integration renamed to "Serac"
+- ✅ Repository renamed to `ha-serac`
+- ✅ Entity prefix system implemented
+- ✅ Improved entity naming (human-readable)
+- ✅ Updated documentation (README, migration guide)
+- ✅ Version bumped to 1.0.0
+
+---
+
+## 🏗️ Architecture
 
 ### Config Data Structure
 ```python
 {
     "latitude": 46.03,
     "longitude": 6.31,
-    "location_name": "Station de Ski Orange",  # User-provided (required)
-    "bra_token": "...",                         # Optional
-    "massif_ids": [1, 2, 3],                    # List (can be empty)
+    "location_name": "Chamonix Mont-Blanc",      # User-provided (required)
+    "entity_prefix": "chamonix",                 # User-provided (required)
+    "bra_token": "...",                          # Optional
+    "massif_ids": [1, 2, 3],                     # List (can be empty)
 }
 ```
 
@@ -82,23 +109,25 @@ Files Modified:
   - Stored in: `hass.data[DOMAIN][entry_id]["bra_coordinators"][massif_id]`
 
 ### Devices Structure
-1. **Main weather device**: `"{location_name} Mountain Weather"`
+1. **Main weather device**: `"{location_name} (Serac)"`
    - Contains: All weather sensors, air quality sensors
-   - Example: "Station de Ski Orange Mountain Weather"
+   - Example: "Chamonix Mont-Blanc (Serac)"
 
-2. **BRA devices** (one per massif): `"{location_name} - {massif_name}"`
+2. **BRA devices** (one per massif): `"{location_name} - {massif_name} (Serac)"`
    - Contains: 8 avalanche sensors
-   - Example: "Station de Ski Orange - Aravis"
+   - Example: "Chamonix Mont-Blanc - Aravis (Serac)"
 
 ### Entity ID Patterns
-- Weather: `sensor.location_46_03_6_31_mountain_weather_temperature`
-- AQI: `sensor.location_46_03_6_31_mountain_weather_air_quality_index_max_day_0`
-- BRA: `sensor.location_46_03_6_31_mountain_weather_1_avalanche_risk_today`
-  - Note: Includes `massif_id` (e.g., `_1_` for Chablais)
+- Weather entity: `weather.serac_{prefix}`
+- Weather sensors: `sensor.serac_{prefix}_{sensor_type}`
+- Avalanche sensors: `sensor.serac_{prefix}_{massif}_{sensor_type}`
 
-### Sensor Naming
-- Weather sensors: Standard names ("Temperature", "Wind Speed")
-- BRA sensors: Include massif name ("Avalanche Risk Today - Aravis")
+### Unique IDs (internal)
+- Weather: `serac_{lat}_{lon}_weather`
+- Sensors: `serac_{lat}_{lon}_{sensor_type}`
+- BRA sensors: `serac_{lat}_{lon}_{massif_id}_{sensor_type}`
+
+---
 
 ## 🔌 API Details
 
@@ -116,6 +145,8 @@ Files Modified:
 - **Update**: Every 6 hours
 - **Timezone**: Europe/Paris (converted to UTC internally)
 - **Season**: Winter only (~December-May)
+
+---
 
 ## 🗺️ Massif Configuration
 
@@ -136,17 +167,19 @@ MASSIF_IDS = {
 
 **Expansion potential**: 40+ massifs across Alps, Pyrenees, Corsica
 
+---
+
 ## 📝 File Structure
 
 ```
-custom_components/better_mountain_weather/
+custom_components/serac/
 ├── __init__.py              # Setup, multiple coordinators, entity migration
-├── config_flow.py           # UI: location name + massif multi-select
-├── const.py                 # Constants, MASSIF_IDS mapping
+├── config_flow.py           # 3-step UI: location → prefix → massifs
+├── const.py                 # Constants, MASSIF_IDS mapping, CONF_ENTITY_PREFIX
 ├── coordinator.py           # AromeCoordinator, BraCoordinator
 ├── sensor.py                # 51 weather sensors + BraSensor class
 ├── weather.py               # Weather entity with ~158 attributes
-├── manifest.json            # Integration metadata (version: 0.6.0)
+├── manifest.json            # Integration metadata (version: 1.0.0)
 ├── strings.json             # UI strings
 └── api/
     ├── openmeteo_client.py  # Open-Meteo API client
@@ -154,50 +187,65 @@ custom_components/better_mountain_weather/
     └── bra_client.py        # BRA API client (Europe/Paris timezone)
 ```
 
-## 🚧 Phase 3: Polish & Enhancement (NEXT)
+---
 
-### Priority 1: Integration Rename 🔴
-- **Current**: `better_mountain_weather`
-- **Target**: TBD by user
-- **Impact**: BREAKING CHANGE
-  - All entity IDs will change
-  - Users must reinstall integration
-  - Automations/dashboards need updates
-- **Plan Needed**: Migration strategy, user communication, documentation
+## 🚀 Future Enhancements (Post v1.0.0)
 
-### Priority 2: Branding 🟡
-- Add custom logo/icon
-- Update integration branding
+### Priority 1: Options Flow 🟡
+- Change massifs without reinstalling
+- Update entity prefix (optional)
+- Modify BRA token
+- **Estimated effort**: 2-3 hours
+
+### Priority 2: Logo & Branding 🟢
+- Custom logo for integration
+- Icon for HACS listing
 - Improve visual identity
+- **Estimated effort**: 1-2 hours (once logo designed)
 
-### Priority 3: Fine-tuning 🟢
-- **Performance**: Monitor API response times, optimize calls
-- **Reliability**: Better error handling, retry logic
-- **UX**: Options flow (change massifs without reinstalling)
-- **Documentation**: User guides, migration docs, troubleshooting
+### Priority 3: Expand Massif Support 🟢
+- Add remaining French Alps massifs (12 more)
+- Add Pyrenees massifs (16 total)
+- Add Corsica massif (1)
+- **Total potential**: 40+ massifs
 
 ### Nice-to-Have Features
-- Support all 40+ French massifs
 - Hourly BRA risk evolution
 - Avalanche bulletin PDF links
 - Snow depth sensors
-- Multi-language support
-- Options flow for massif configuration
+- Multi-language support (French, German, Italian)
+- Enhanced diagnostics support
+- Custom update intervals
 
-## 🐛 Known Issues & Resolutions
+---
 
-### All Resolved ✅
+## 📚 Version History
+
+- **v1.0.0** (2026-02-11): 🎉 Complete rebrand to "Serac", smart entity naming, breaking changes
+- **v0.6.0** (2026-02-11): Custom location names, multiple massifs, separate devices
+- **v0.5.4** (2026-02-11): Fix BRA timezone (Europe/Paris)
+- **v0.5.0** (2026-02-11): BRA avalanche integration (Phase 2)
+- **v0.4.5**: Parallel API calls, performance improvements
+- **v0.3.x**: Core weather integration (Phase 1)
+
+---
+
+## 🐛 Known Issues & Limitations
+
+### Current Limitations
+- BRA data only available in winter season (~December-May)
+- Limited to 11 massifs (expandable to 40+)
+- No options flow yet (must re-add integration to change massifs)
+
+### All Previous Issues Resolved ✅
 - ✅ Timezone handling (Europe/Paris → UTC)
 - ✅ Extra attributes None check
 - ✅ Multiple massifs support
 - ✅ Custom location naming
 - ✅ Entity migration for structure changes
+- ✅ Entity naming clarity
 
-### Current Limitations
-- BRA data only available in winter season
-- Limited to 11 massifs (expandable to 40+)
-- No options flow (must re-add integration to change massifs)
-- Integration name is generic
+---
 
 ## 🔧 Development Patterns
 
@@ -207,62 +255,45 @@ custom_components/better_mountain_weather/
 - **Entity migration**: Add cleanup logic when structure changes
 - **Parallel API**: Use `asyncio.gather()` for performance
 - **Error handling**: Log warnings for BRA failures, don't fail setup
+- **Entity IDs**: Set explicitly using `entity_id` property
+- **Unique IDs**: Use coordinates for uniqueness, not entity IDs
 
 ### Testing Checklist
 ```bash
 # Test scenarios
-- [ ] 0 massifs (weather only)
-- [ ] 1 massif
-- [ ] Multiple massifs (3+)
-- [ ] Out-of-season BRA behavior
-- [ ] Timezone correctness
-- [ ] Entity migration from v0.5.x
+- [x] 0 massifs (weather only)
+- [x] 1 massif
+- [x] Multiple massifs (3+)
+- [x] Out-of-season BRA behavior
+- [x] Timezone correctness
+- [x] Entity prefix validation
+- [x] Suggested prefix generation
 
 # Commands
-tail -f /config/home-assistant.log | grep better_mountain_weather
+tail -f /config/home-assistant.log | grep serac
 # Developer Tools → Services → homeassistant.reload_config_entry
 ```
 
-## 📚 Version History
-
-- **v0.6.0** (2026-02-11): Custom location names, multiple massifs, separate devices
-- **v0.5.4** (2026-02-11): Fix BRA timezone (Europe/Paris)
-- **v0.5.3** (2026-02-11): Explicit UTC timezone for bulletin_date
-- **v0.5.2** (2026-02-11): Fix extra_attributes_fn None check
-- **v0.5.1** (2026-02-11): Add extra_attributes_fn field
-- **v0.5.0** (2026-02-11): BRA avalanche integration (Phase 2)
-- **v0.4.5**: Parallel API calls, performance improvements
-- **v0.3.x**: Core weather integration (Phase 1)
-
-## 🎯 Next Session Action Items
-
-See **NEXT_STEPS.md** for detailed task list.
-
-### Immediate Priorities
-1. **Plan integration rename** (breaking change strategy)
-2. **Design/add logo** (branding)
-3. **Options flow** (change massifs without reinstall)
-4. **Documentation** (README, migration guide, troubleshooting)
-
-### Before Making Changes
-- Create task list for tracking
-- Test locally if possible
-- Document breaking changes
-- Update version in manifest.json
-- Create snapshot branch for major changes
+---
 
 ## 📞 Support & Credits
 
 **Developer**: Atacama Labs
-**AI Assistant**: Claude (Anthropic)
+**Repository**: https://github.com/atacamalabs/ha-serac
+**Issues**: https://github.com/atacamalabs/ha-serac/issues
+**Email**: hi@atacamalabs.com
+
 **Data Sources**:
 - Weather: Open-Meteo (Météo-France AROME/ARPEGE)
 - Avalanche: Météo-France BRA
 - Air Quality: Open-Meteo
 
-**GitHub**: https://github.com/atacamalabs/ha-better-mountain-weather
-**Issues**: https://github.com/atacamalabs/ha-better-mountain-weather/issues
+---
+
+## 🎯 Next Steps
+
+See **NEXT_STEPS.md** for post-v1.0.0 roadmap.
 
 ---
 
-**Note**: This integration is in active development. Phase 2 complete, Phase 3 planning in progress.
+**Status**: Production ready v1.0.0 released 🎉

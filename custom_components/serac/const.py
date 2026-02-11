@@ -1,9 +1,9 @@
-"""Constants for the Better Mountain Weather integration."""
+"""Constants for the Serac integration."""
 from datetime import timedelta
 from typing import Final
 
 # Integration domain
-DOMAIN: Final = "better_mountain_weather"
+DOMAIN: Final = "serac"
 
 # Platforms
 PLATFORMS: Final = ["weather", "sensor"]
@@ -12,6 +12,7 @@ PLATFORMS: Final = ["weather", "sensor"]
 CONF_AROME_TOKEN: Final = "arome_token"
 CONF_BRA_TOKEN: Final = "bra_token"
 CONF_LOCATION_NAME: Final = "location_name"
+CONF_ENTITY_PREFIX: Final = "entity_prefix"
 CONF_MASSIF_ID: Final = "massif_id"
 CONF_MASSIF_NAME: Final = "massif_name"
 CONF_MASSIF_IDS: Final = "massif_ids"
@@ -24,7 +25,7 @@ BRA_UPDATE_INTERVAL: Final = timedelta(hours=6)
 API_TIMEOUT: Final = 30
 
 # Default values
-DEFAULT_NAME: Final = "Better Mountain Weather"
+DEFAULT_NAME: Final = "Serac"
 
 # Attribution
 ATTRIBUTION: Final = "Data from Open-Meteo (Météo-France AROME & ARPEGE models)"

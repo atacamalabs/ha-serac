@@ -1,4 +1,4 @@
-"""Data update coordinators for Better Mountain Weather integration."""
+"""Data update coordinators for Serac integration."""
 from __future__ import annotations
 
 from datetime import timedelta

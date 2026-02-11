@@ -1,4 +1,4 @@
-"""The Better Mountain Weather integration."""
+"""The Serac integration."""
 from __future__ import annotations
 
 import logging
@@ -136,7 +136,7 @@ async def async_migrate_entity_ids(hass: HomeAssistant, entry: ConfigEntry) -> N
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Better Mountain Weather from a config entry.
+    """Set up Serac from a config entry.
 
     Args:
         hass: Home Assistant instance
@@ -161,7 +161,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         massif_ids = [entry.data[CONF_MASSIF_ID]]
 
     _LOGGER.debug(
-        "Setting up Better Mountain Weather for %s (%.4f, %.4f)",
+        "Setting up Serac for %s (%.4f, %.4f)",
         location_name,
         latitude,
         longitude,
@@ -268,7 +268,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     _LOGGER.info(
-        "Successfully set up Better Mountain Weather for %s",
+        "Successfully set up Serac for %s",
         location_name,
     )
 
@@ -285,7 +285,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     Returns:
         True if unload was successful
     """
-    _LOGGER.debug("Unloading Better Mountain Weather")
+    _LOGGER.debug("Unloading Serac")
 
     # Unload platforms
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

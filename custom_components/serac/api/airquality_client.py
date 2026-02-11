@@ -1,4 +1,4 @@
-"""Open-Meteo Air Quality API client for Better Mountain Weather integration."""
+"""Open-Meteo Air Quality API client for Serac integration."""
 from __future__ import annotations
 
 import logging

@@ -1,224 +1,320 @@
-# A Better Mountain Weather
+# Serac 🏔️
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+[![GitHub Release](https://img.shields.io/github/release/atacamalabs/ha-serac.svg)](https://github.com/atacamalabs/ha-serac/releases)
+[![License](https://img.shields.io/github/license/atacamalabs/ha-serac.svg)](LICENSE)
 
-A comprehensive Home Assistant integration providing detailed mountain weather data for the French Alps, Pyrenees, and Corsica. This integration combines two Météo-France APIs to deliver accurate forecasts and avalanche risk information.
+**Mountain weather and avalanche forecasts for Home Assistant**
+
+Serac is a comprehensive Home Assistant integration providing detailed mountain weather data and avalanche bulletins for the French Alps, Pyrenees, and Corsica. Get accurate forecasts from Météo-France AROME/ARPEGE models and real-time avalanche risk assessments.
+
+---
 
 ## Features
 
-### Phase 1 (Current) - AROME Weather Integration
+### 🌤️ Weather Data
+- **Weather entity** with 7-day daily and 48-hour hourly forecasts
+- **51 weather sensors** including:
+  - Current conditions (temperature, humidity, wind, precipitation, cloud coverage)
+  - 3-day detailed forecasts (13 parameters per day)
+  - Sunrise/sunset, UV index, sunshine duration
+  - Hourly precipitation forecasts
 
-**Weather Entity:**
-- Current conditions (temperature, humidity, pressure, wind, cloud coverage)
-- 7-day daily forecast with temperature, precipitation, and wind
-- 48-hour hourly forecast with detailed conditions
-- UV index monitoring
+### 🌫️ Air Quality
+- **6 air quality sensors** with 5-day forecasts:
+  - European Air Quality Index (AQI)
+  - PM2.5, PM10, NO₂, O₃, SO₂ levels
 
-**11 AROME Sensors:**
-1. **Elevation** - Location altitude in meters
-2. **Air Quality** - AQI value (when available)
-3. **UV Index** - UV index (0-11)
-4. **Sunrise** - Daily sunrise time
-5. **Sunset** - Daily sunset time
-6. **Cloud Coverage** - Current cloud cover percentage
-7. **Humidity** - Current humidity percentage
-8. **Wind Speed (Current)** - Current wind speed
-9. **Wind Gust (Current)** - Current wind gusts
-10. **Wind Speed Today Max** - Maximum wind speed forecast for today
-11. **Wind Gust Today Max** - Maximum wind gusts forecast for today
+### ⚠️ Avalanche Bulletins
+- **8 avalanche sensors per massif**:
+  - Risk levels (today & tomorrow, 1-5 scale)
+  - High/low altitude risk zones
+  - Accidental & natural avalanche descriptions
+  - Bulletin summaries and dates
+- **Multiple massifs support** - select 0-11 massifs from Haute-Savoie/Savoie regions
+- **Separate device per massif** for clear organization
 
-### Phase 2 (Coming Soon) - BRA Avalanche Data
+### 🎯 Smart Entity Naming
+- **User-defined entity prefix** for clean, memorable entity IDs
+- Example: `sensor.serac_chamonix_temperature`
+- Avalanche sensors include massif: `sensor.serac_chamonix_aravis_avalanche_risk_today`
 
-8 additional sensors providing avalanche risk assessment:
-- Avalanche risk level (1-5 European scale)
-- Risk trend (stable/increasing/decreasing)
-- Snowpack quality description
-- Recent snowfall measurements
-- Altitude risk limits
-- Wind transport risk
-- Wet snow risk
-- Accidental trigger risk
+---
 
 ## Installation
 
 ### Via HACS (Recommended)
 
 1. Open HACS in Home Assistant
-2. Click on "Integrations"
-3. Click the three dots in the top right corner
-4. Select "Custom repositories"
-5. Add this repository URL: `https://github.com/atacamalabs/ha-better-mountain-weather`
-6. Select category: "Integration"
-7. Click "Add"
-8. Find "A Better Mountain Weather" in HACS and click "Download"
-9. Restart Home Assistant
+2. Click on **Integrations**
+3. Click the **⋮** (three dots) in the top right
+4. Select **Custom repositories**
+5. Add repository URL: `https://github.com/atacamalabs/ha-serac`
+6. Select category: **Integration**
+7. Click **Add**
+8. Find **Serac** in HACS and click **Download**
+9. **Restart Home Assistant**
+10. Go to **Settings** → **Devices & Services** → **Add Integration**
+11. Search for **Serac** and follow the setup steps
 
 ### Manual Installation
 
-1. Download the `custom_components/better_mountain_weather` folder
-2. Copy it to your Home Assistant `custom_components` directory
+1. Download the `custom_components/serac` folder from this repository
+2. Copy it to your Home Assistant `config/custom_components/` directory
 3. Restart Home Assistant
+4. Go to **Settings** → **Devices & Services** → **Add Integration**
+5. Search for **Serac**
+
+---
 
 ## Configuration
 
-### Prerequisites
-
-You need two API tokens from Météo-France:
-
-1. **AROME API Token**: For weather forecasts
-   - Visit: [Météo-France API Portal](https://portail-api.meteofrance.fr/)
-   - Create an account and subscribe to the AROME API
-   - Copy your API key
-
-2. **BRA API Token**: For avalanche bulletins
-   - Visit: [Météo-France API Portal](https://portail-api.meteofrance.fr/)
-   - Subscribe to the BRA (Bulletin Risque Avalanche) API
-   - Copy your API key
-
 ### Setup Steps
 
-1. Go to **Settings** → **Devices & Services**
-2. Click **+ Add Integration**
-3. Search for "A Better Mountain Weather"
-4. Enter your AROME API token
-5. Enter your BRA API token
-6. Enter GPS coordinates for your mountain location
+1. **Add Integration**
+   - Go to **Settings** → **Devices & Services**
+   - Click **+ Add Integration**
+   - Search for **Serac**
+
+2. **Location Setup**
+   - Enter a name for your location (e.g., "Chamonix Mont-Blanc")
+   - Enter GPS coordinates (latitude, longitude)
    - Example: Chamonix (45.9237, 6.8694)
-   - Example: Grenoble (45.1885, 5.7245)
-7. The integration will automatically detect the nearest massif for avalanche data
+
+3. **Entity Prefix**
+   - Choose a short identifier for your entities
+   - Suggested automatically from your location name
+   - Used in entity IDs: `sensor.serac_{your_prefix}_temperature`
+
+4. **Avalanche Data (Optional)**
+   - Add Météo-France BRA API token (optional)
+   - Select massifs for avalanche bulletins (0-11 massifs)
+   - Skip if you only want weather data
 
 ### Finding GPS Coordinates
 
-You can find GPS coordinates for your location using:
-- Google Maps (right-click on location → coordinates)
-- [OpenStreetMap](https://www.openstreetmap.org/)
-- Your smartphone's GPS
+- **Google Maps**: Right-click on location → Click coordinates to copy
+- **OpenStreetMap**: [openstreetmap.org](https://www.openstreetmap.org/)
+- **Your Phone**: Use GPS app to get current coordinates
 
-## Supported Regions
+### Getting BRA API Token (Optional)
 
-### French Alps (23 Massifs)
-Chablais, Aravis, Mont-Blanc, Bauges, Beaufortain, Haute-Tarentaise, Chartreuse, Belledonne, Maurienne, Vanoise, Haute-Maurienne, Vercors, Oisans, Grandes-Rousses, Thabor, Pelvoux, Queyras, Dévoluy, Champsaur, Embrunais-Parpaillon, Ubaye, Mercantour, Alpes-Azur
+For avalanche bulletins, you need a Météo-France BRA API token:
 
-### Pyrenees (16 Massifs)
-Pays-Basque, Aspe-Ossau, Haute-Bigorre, Aure-Louron, Luchonnais, Couserans, Haute-Ariège, Orlu-St-Barthélémy, Capcir-Puymorens, Cerdagne-Canigou, Andorre, and more
+1. Visit [Météo-France API Portal](https://portail-api.meteofrance.fr/)
+2. Create an account
+3. Subscribe to the **BRA (Bulletin Risque Avalanche)** API
+4. Copy your API key
+5. Enter it during Serac setup or leave empty to skip avalanche features
 
-### Corsica (1 Massif)
-Corse
+---
+
+## Supported Massifs
+
+### Haute-Savoie & Savoie (11 Massifs)
+
+Currently supported massifs for avalanche bulletins:
+- **Chablais** • **Aravis** • **Mont-Blanc**
+- **Bauges** • **Beaufortain** • **Haute-Tarentaise**
+- **Maurienne** • **Vanoise** • **Haute-Maurienne**
+
+*More massifs across the Alps, Pyrenees, and Corsica coming in future updates.*
+
+---
 
 ## Usage Examples
 
-### Lovelace Card Example
+### Weather Card
 
 ```yaml
 type: weather-forecast
-entity: weather.better_mountain_weather_chamonix_mont_blanc
+entity: weather.serac_chamonix
 forecast_type: daily
 ```
 
-### Sensor Card Example
+### Sensor Cards
 
 ```yaml
 type: entities
+title: Mountain Conditions
 entities:
-  - entity: sensor.better_mountain_weather_chamonix_mont_blanc_elevation
-  - entity: sensor.better_mountain_weather_chamonix_mont_blanc_uv_index
-  - entity: sensor.better_mountain_weather_chamonix_mont_blanc_wind_speed_current
-  - entity: sensor.better_mountain_weather_chamonix_mont_blanc_wind_gust_current
+  - entity: sensor.serac_chamonix_temperature
+  - entity: sensor.serac_chamonix_wind_speed_current
+  - entity: sensor.serac_chamonix_wind_gust_current
+  - entity: sensor.serac_chamonix_european_aqi
+  - entity: sensor.serac_chamonix_elevation
 ```
 
-### Automation Example
+### Avalanche Risk Card
+
+```yaml
+type: entities
+title: Avalanche Risk - Aravis
+entities:
+  - entity: sensor.serac_chamonix_aravis_avalanche_risk_today
+  - entity: sensor.serac_chamonix_aravis_avalanche_risk_tomorrow
+  - entity: sensor.serac_chamonix_aravis_avalanche_risk_high_altitude
+  - entity: sensor.serac_chamonix_aravis_avalanche_risk_low_altitude
+  - entity: sensor.serac_chamonix_aravis_avalanche_accidental
+```
+
+### Automation: High Wind Alert
 
 ```yaml
 automation:
-  - alias: "Alert on high wind"
+  - alias: "Mountain High Wind Alert"
     trigger:
       - platform: numeric_state
-        entity_id: sensor.better_mountain_weather_chamonix_mont_blanc_wind_gust_today_max
-        above: 50
+        entity_id: sensor.serac_chamonix_wind_gust_max_day0
+        above: 60
     action:
       - service: notify.mobile_app
         data:
-          message: "High wind warning: gusts expected to exceed 50 km/h today!"
+          title: "⚠️ High Wind Warning"
+          message: "Wind gusts expected to exceed 60 km/h today in Chamonix!"
 ```
+
+### Automation: Avalanche Risk Alert
+
+```yaml
+automation:
+  - alias: "High Avalanche Risk Alert"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.serac_chamonix_aravis_avalanche_risk_today
+        above: 3
+    action:
+      - service: notify.mobile_app
+        data:
+          title: "⚠️ Avalanche Warning"
+          message: "Avalanche risk level {{ states('sensor.serac_chamonix_aravis_avalanche_risk_today') }} in Aravis today!"
+```
+
+---
 
 ## Data Sources
 
-- **Weather Forecasts**: Météo-France AROME model (high-resolution forecasts for France)
-- **Avalanche Bulletins**: Météo-France BRA (Bulletin Risque Avalanche)
+- **Weather Forecasts**: [Open-Meteo](https://open-meteo.com/) (Météo-France AROME 2.5km & ARPEGE models)
+- **Avalanche Bulletins**: [Météo-France BRA](https://meteofrance.com/meteo-montagne) (Bulletin Risque Avalanche)
+- **Air Quality**: Open-Meteo European AQI
 
-All data is provided by Météo-France, the French national meteorological service.
+All data is provided by **Météo-France**, the French national meteorological service.
+
+---
 
 ## Update Frequency
 
-- **AROME Weather Data**: Updated every hour
-- **BRA Avalanche Data**: Updated every 6 hours (bulletins published once daily)
+- **Weather Data**: Every 1 hour
+- **Air Quality**: Every 1 hour
+- **Avalanche Bulletins**: Every 6 hours (published once daily)
 
-## Beta Testing
+---
 
-This integration is currently in beta. We welcome feedback and bug reports!
+## Migrating from v0.6.0
 
-### Enabling Beta Releases
+**⚠️ Breaking change:** Serac v1.0.0 requires a complete reinstall.
 
-1. In HACS, go to the integration settings
-2. Enable "Show beta versions"
-3. You'll receive updates for all beta releases
+See **[MIGRATION_v1.md](MIGRATION_v1.md)** for detailed migration instructions.
 
-### Current Version
+**Quick summary:**
+1. Remove old "Better Mountain Weather" integration
+2. Remove old HACS repository
+3. Restart Home Assistant
+4. Add new repository: `https://github.com/atacamalabs/ha-serac`
+5. Install Serac and reconfigure
+6. Update automations and dashboards with new entity IDs
 
-**v0.1.0b1** - Phase 1: AROME weather integration
-
-### Upcoming Releases
-
-- **v0.2.0b1** - Phase 2: BRA avalanche risk sensors
-- **v1.0.0** - Stable release with full feature set
+---
 
 ## Troubleshooting
 
 ### Integration doesn't appear after installation
 - Restart Home Assistant completely (not just reload)
-- Check logs for any errors: Settings → System → Logs
+- Check **Settings** → **System** → **Logs** for errors
+- Verify the `custom_components/serac` folder exists
 
-### "Invalid API token" error
-- Verify your API tokens are correct
-- Ensure your API subscription is active on the Météo-France portal
-- Check that you haven't exceeded your API quota
-
-### "Cannot connect" error
-- Verify your GPS coordinates are correct
+### Weather data not updating
 - Check your internet connection
-- Ensure Météo-France API services are operational
+- Verify coordinates are correct and within supported regions
+- Wait for first update (up to 1 hour)
+- Check logs for API errors
 
-### No data in sensors
-- Wait for the first data update (up to 1 hour for AROME)
-- Check the coordinator update status in logs
-- Verify your location is within supported regions (France)
+### Avalanche sensors not appearing
+- Verify you entered a valid BRA API token
+- Verify you selected at least one massif
+- Avalanche bulletins are seasonal (~December-May)
+- Check logs for BRA coordinator errors
+
+### Entity IDs don't match examples
+- Entity IDs use your chosen prefix
+- Example: If you chose prefix "home", entities will be `sensor.serac_home_temperature`
+- Check **Developer Tools** → **States** and filter by "serac"
+
+### "Cannot connect" error during setup
+- Verify GPS coordinates format (e.g., 45.9237, not 45° 55' 25")
+- Check your internet connection
+- Ensure Open-Meteo service is accessible
+- Try coordinates of a known location (e.g., Chamonix: 45.9237, 6.8694)
+
+---
 
 ## Contributing
 
 Contributions are welcome! Please:
 1. Fork the repository
 2. Create a feature branch
-3. Submit a pull request
+3. Make your changes
+4. Submit a pull request
 
-## Support
+### Feature Requests & Bug Reports
+- **Issues**: [GitHub Issues](https://github.com/atacamalabs/ha-serac/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/atacamalabs/ha-serac/discussions)
 
-- **Issues**: [GitHub Issues](https://github.com/atacamalabs/ha-better-mountain-weather/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/atacamalabs/ha-better-mountain-weather/discussions)
+---
+
+## Roadmap
+
+### Planned Features
+- [ ] Options flow (change massifs without reinstalling)
+- [ ] Support for all 40+ French massifs
+- [ ] Custom logo and branding
+- [ ] Enhanced error handling and diagnostics
+- [ ] Multi-language support (French, German, Italian)
+- [ ] Snow depth sensors
+- [ ] Hourly avalanche risk evolution
+
+---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details
+[MIT License](LICENSE)
+
+---
 
 ## Acknowledgments
 
-- Météo-France for providing excellent weather and avalanche data APIs
-- [meteofrance-api](https://github.com/hacf-fr/meteofrance-api) library by @hacf-fr
+- **Météo-France** for providing excellent weather and avalanche data APIs
+- **Open-Meteo** for API access to Météo-France models
 - Home Assistant community for development support
+
+---
 
 ## Disclaimer
 
-This integration provides weather and avalanche information for informational purposes only. Always consult official sources and professional guides before making decisions in mountain environments. The authors are not responsible for any incidents resulting from use of this data.
+This integration provides weather and avalanche information **for informational purposes only**. Always consult official sources and professional mountain guides before making decisions in mountain environments.
+
+**The authors are not responsible for any incidents resulting from use of this data.**
+
+---
+
+## Support
+
+- 🐛 **Bug reports**: [GitHub Issues](https://github.com/atacamalabs/ha-serac/issues)
+- 💬 **Questions**: [GitHub Discussions](https://github.com/atacamalabs/ha-serac/discussions)
+- 📧 **Email**: hi@atacamalabs.com
 
 ---
 
 **Made with ❤️ for the mountain community**
+
+*Serac: Named after the ice formations found in glaciers and mountain environments.*
