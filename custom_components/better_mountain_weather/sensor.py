@@ -28,6 +28,7 @@ from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import dt as dt_util
 
 from .const import (
     ATTRIBUTION,
@@ -480,7 +481,7 @@ BRA_SENSORS: tuple[BetterMountainWeatherSensorDescription, ...] = (
         name="Avalanche Bulletin Date",
         device_class=SensorDeviceClass.TIMESTAMP,
         icon="mdi:calendar-clock",
-        value_fn=lambda data: datetime.fromisoformat(data.get("bulletin_date")) if data.get("has_data") and data.get("bulletin_date") else None,
+        value_fn=lambda data: dt_util.parse_datetime(data.get("bulletin_date")) if data.get("has_data") and data.get("bulletin_date") else None,
         extra_attributes_fn=lambda data: {
             "massif": data.get("massif_name"),
         } if data.get("has_data") else {},
@@ -681,7 +682,7 @@ class BraSensor(CoordinatorEntity[BraCoordinator], SensorEntity):
             return {}
 
         # Get base attributes from description
-        if hasattr(self.entity_description, "extra_attributes_fn"):
+        if hasattr(self.entity_description, "extra_attributes_fn") and self.entity_description.extra_attributes_fn is not None:
             attrs = self.entity_description.extra_attributes_fn(self.coordinator.data)
             if attrs:
                 return attrs
