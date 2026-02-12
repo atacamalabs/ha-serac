@@ -8,7 +8,7 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
 
@@ -72,6 +72,12 @@ class SeracConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         """Initialize the config flow."""
         self._data: dict[str, Any] = {}
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> SeracOptionsFlow:
+        """Get the options flow for this handler."""
+        return SeracOptionsFlow(config_entry)
 
     def _validate_prefix(self, prefix: str) -> bool:
         """Validate entity prefix format.
@@ -266,4 +272,65 @@ class SeracConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders={
                 "massif_info": "Optional: Add Météo-France BRA API token and select massifs for avalanche data. Leave empty to skip avalanche features.",
             },
+        )
+
+
+class SeracOptionsFlow(config_entries.OptionsFlow):
+    """Handle Serac options."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            # Update config entry with new massifs/token
+            new_data = {**self.config_entry.data}
+
+            # Update massif selection
+            new_data[CONF_MASSIF_IDS] = user_input.get(CONF_MASSIF_IDS, [])
+
+            # Update BRA token if provided, or remove if empty
+            if user_input.get(CONF_BRA_TOKEN):
+                new_data[CONF_BRA_TOKEN] = user_input[CONF_BRA_TOKEN].strip()
+            elif CONF_BRA_TOKEN in new_data:
+                # User cleared token or didn't provide one, remove it
+                new_data.pop(CONF_BRA_TOKEN, None)
+
+            # Update config entry
+            self.hass.config_entries.async_update_entry(
+                self.config_entry, data=new_data
+            )
+
+            # Reload the integration to apply changes
+            await self.hass.config_entries.async_reload(self.config_entry.entry_id)
+
+            return self.async_create_entry(title="", data={})
+
+        # Get current values
+        current_massifs = self.config_entry.data.get(CONF_MASSIF_IDS, [])
+        current_token = self.config_entry.data.get(CONF_BRA_TOKEN, "")
+
+        # Create massif options for multi-select
+        massif_options = {str(num_id): name for num_id, (name, _) in MASSIF_IDS.items()}
+
+        data_schema = vol.Schema({
+            vol.Optional(
+                CONF_BRA_TOKEN,
+                description={"suggested_value": current_token},
+                default=current_token
+            ): str,
+            vol.Optional(
+                CONF_MASSIF_IDS,
+                description={"suggested_value": current_massifs},
+                default=current_massifs
+            ): cv.multi_select(massif_options),
+        })
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=data_schema,
         )

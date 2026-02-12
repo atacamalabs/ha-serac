@@ -48,5 +48,21 @@
     "abort": {
       "already_configured": "This location is already configured."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Serac Configuration",
+        "description": "Change your massif selection or BRA API token. The integration will reload automatically to apply changes.",
+        "data": {
+          "bra_token": "BRA API Token (optional)",
+          "massif_ids": "Select Massifs (optional)"
+        },
+        "data_description": {
+          "bra_token": "Météo-France API key for avalanche bulletins. Leave empty to remove avalanche data.",
+          "massif_ids": "Select one or more massifs for avalanche risk data. Deselect all to remove avalanche sensors."
+        }
+      }
+    }
   }
 }
