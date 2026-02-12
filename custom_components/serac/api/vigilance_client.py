@@ -112,14 +112,6 @@ class VigilanceClient:
                     response.raise_for_status()
                     data = await response.json()
 
-                    # DEBUG: Log the full API response to understand structure
-                    import json
-                    _LOGGER.warning(
-                        "VIGILANCE API RESPONSE (dept %s): %s",
-                        self._department,
-                        json.dumps(data, indent=2, ensure_ascii=False)
-                    )
-
                     _LOGGER.debug(
                         "Vigilance API response received for department %s",
                         self._department,
@@ -214,27 +206,26 @@ class VigilanceClient:
         Returns:
             Department-specific vigilance data or None if not found
         """
-        # The actual API response structure may vary - this is a template
-        # that should be adjusted based on the real API response format
-
-        # Typical structure might be:
+        # Real API structure (based on actual response):
         # {
         #   "product": {
-        #     "update_time": "2026-02-12T10:00:00Z",
-        #     "timelaps": [
+        #     "periods": [
         #       {
-        #         "timelaps_id": 1,
-        #         "begin_time": "2026-02-12T06:00:00Z",
-        #         "end_time": "2026-02-13T06:00:00Z",
-        #         "zones": {
-        #           "74": {
-        #             "niveau_vigilance": 2,
-        #             "phenomenes": {
-        #               "1": {"niveau": 2},  # wind
-        #               "5": {"niveau": 1},  # snow_ice
-        #               ...
+        #         "echeance": "J",
+        #         "timelaps": {
+        #           "domain_ids": [
+        #             {
+        #               "domain_id": "74",
+        #               "max_color_id": 3,
+        #               "phenomenon_items": [
+        #                 {
+        #                   "phenomenon_id": "8",
+        #                   "phenomenon_max_color_id": 3,
+        #                   ...
+        #                 }
+        #               ]
         #             }
-        #           }
+        #           ]
         #         }
         #       }
         #     ]
@@ -242,45 +233,68 @@ class VigilanceClient:
         # }
 
         try:
-            # Navigate to department data (adjust path based on real API)
+            # Navigate to department data
             product = data.get("product", {})
-            timelaps_list = product.get("timelaps", [])
+            periods = product.get("periods", [])
 
-            if not timelaps_list:
-                _LOGGER.debug("No timelaps data in vigilance response")
+            if not periods:
+                _LOGGER.debug("No periods data in vigilance response")
                 return None
 
-            # Get current/first timelaps
-            current_timelaps = timelaps_list[0]
-            zones = current_timelaps.get("zones", {})
-            dept_data = zones.get(self._department, zones.get(str(self._department)))
+            # Get current period (first one, usually "J" for today)
+            current_period = periods[0]
+            timelaps = current_period.get("timelaps", {})
+            domain_ids = timelaps.get("domain_ids", [])
+
+            if not domain_ids:
+                _LOGGER.debug("No domain_ids in current period")
+                return None
+
+            # Find our department in the domain_ids list
+            dept_data = None
+            for domain in domain_ids:
+                if domain.get("domain_id") == self._department:
+                    dept_data = domain
+                    break
 
             if not dept_data:
                 _LOGGER.debug(
-                    "Department %s not found in zones: %s",
+                    "Department %s not found in domain_ids. Available domains: %s",
                     self._department,
-                    list(zones.keys()),
+                    [d.get("domain_id") for d in domain_ids[:10]],  # Show first 10
                 )
                 return None
 
-            # Extract overall level
-            overall_level = dept_data.get("niveau_vigilance", 1)
+            # Extract overall level (max_color_id: 1=green, 2=yellow, 3=orange, 4=red)
+            overall_level = dept_data.get("max_color_id", 1)
 
             # Extract individual phenomena
             phenomena = {}
-            phenomenes_data = dept_data.get("phenomenes", {})
+            phenomenon_items = dept_data.get("phenomenon_items", [])
 
-            for phenom_id, phenom_data in phenomenes_data.items():
-                # Convert phenomenon ID to name
-                phenom_id_int = int(phenom_id)
+            for phenom_item in phenomenon_items:
+                # Get phenomenon ID as string, then convert to int
+                phenom_id_str = phenom_item.get("phenomenon_id")
+                if not phenom_id_str:
+                    continue
+
+                phenom_id_int = int(phenom_id_str)
                 phenom_name = VIGILANCE_PHENOMENA.get(phenom_id_int)
 
                 if phenom_name:
-                    phenom_level = phenom_data.get("niveau", 1)
+                    # Use phenomenon_max_color_id as the alert level
+                    phenom_level = phenom_item.get("phenomenon_max_color_id", 1)
                     phenomena[phenom_name] = {
                         "level": phenom_level,
                         "color": VIGILANCE_COLOR_CODES.get(phenom_level, "green"),
                     }
+
+            _LOGGER.debug(
+                "Extracted vigilance for dept %s: level=%d, phenomena=%s",
+                self._department,
+                overall_level,
+                list(phenomena.keys()),
+            )
 
             return {
                 "overall_level": overall_level,
