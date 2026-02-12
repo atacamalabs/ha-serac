@@ -1,8 +1,8 @@
 # Serac Integration - Project Status
 
 **Last Updated**: 2026-02-12
-**Current Version**: v1.2.6 🎉
-**Status**: Options Flow Complete ✅
+**Current Version**: v1.3.0 🎉
+**Status**: Logo & Branding Complete ✅
 **Repository**: https://github.com/atacamalabs/ha-serac
 **Roadmap**: See ROADMAP.md for development plan
 
@@ -17,11 +17,19 @@ Serac (formerly "Better Mountain Weather") is a Home Assistant integration provi
 
 ---
 
-## ✅ Version 1.2.6 - Options Flow Complete (CURRENT)
+## ✅ Version 1.3.0 - Logo & Branding (CURRENT)
+
+### 🎉 What's New in v1.3.0
+
+**v1.3.0 (Latest):**
+- 🎨 **Custom logo** - Professional serac/mountain icon with weather elements
+- 🏔️ **Visual identity** - Shows in Home Assistant Devices & Services
+- 📦 **HACS branding** - Logo appears in HACS integration listing
+- 🌟 **README enhancement** - Logo displayed prominently on GitHub
 
 ### 🎉 What's New in v1.2.x Series
 
-**v1.2.6 (Latest):**
+**v1.2.6:**
 - ✨ **Complete cleanup** - Removes both entities AND devices for removed massifs
 - 🔧 **Device registry integration** - Proper device lifecycle management
 
