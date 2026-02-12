@@ -56,9 +56,17 @@ async def async_get_config_entry_diagnostics(
         elif arome_coordinator.data and "timestamp" in arome_coordinator.data:
             last_update = arome_coordinator.data.get("timestamp")
 
+        # Convert to ISO format string if it's a datetime object
+        last_update_str = None
+        if last_update:
+            if isinstance(last_update, str):
+                last_update_str = last_update
+            elif hasattr(last_update, "isoformat"):
+                last_update_str = last_update.isoformat()
+
         diagnostics_data["coordinators"]["arome"] = {
             "last_update_success": arome_coordinator.last_update_success,
-            "last_update_time": last_update.isoformat() if last_update else None,
+            "last_update_time": last_update_str,
             "update_interval_seconds": (
                 arome_coordinator.update_interval.total_seconds()
                 if arome_coordinator.update_interval
@@ -92,10 +100,18 @@ async def async_get_config_entry_diagnostics(
             elif coordinator.data and "bulletin_date" in coordinator.data:
                 last_update = coordinator.data.get("bulletin_date")
 
+            # Convert to ISO format string if it's a datetime object
+            last_update_str = None
+            if last_update:
+                if isinstance(last_update, str):
+                    last_update_str = last_update
+                elif hasattr(last_update, "isoformat"):
+                    last_update_str = last_update.isoformat()
+
             diagnostics_data["coordinators"]["bra"][str(massif_id)] = {
                 "massif_name": coordinator.massif_name,
                 "last_update_success": coordinator.last_update_success,
-                "last_update_time": last_update.isoformat() if last_update else None,
+                "last_update_time": last_update_str,
                 "update_interval_seconds": (
                     coordinator.update_interval.total_seconds()
                     if coordinator.update_interval
