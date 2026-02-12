@@ -77,10 +77,10 @@ class OpenMeteoClient:
                     }
 
         except aiohttp.ClientError as err:
-            _LOGGER.error("Network error getting current weather: %s", err)
-            raise OpenMeteoApiError(f"Failed to get current weather (network): {err}") from err
+            _LOGGER.error("Network error getting current weather: %s", err, exc_info=True)
+            raise OpenMeteoApiError(f"Network error: {err}") from err
         except Exception as err:
-            _LOGGER.error("Error getting current weather: %s (type: %s)", err, type(err).__name__)
+            _LOGGER.error("Error getting current weather: %s (type: %s)", err, type(err).__name__, exc_info=True)
             raise OpenMeteoApiError(f"Failed to get current weather: {err}") from err
 
     async def async_get_daily_forecast(self) -> list[dict[str, Any]]:
@@ -151,8 +151,11 @@ class OpenMeteoClient:
 
                     return daily_forecasts
 
+        except aiohttp.ClientError as err:
+            _LOGGER.error("Network error getting daily forecast: %s", err, exc_info=True)
+            raise OpenMeteoApiError(f"Network error: {err}") from err
         except Exception as err:
-            _LOGGER.error("Error getting daily forecast: %s", err)
+            _LOGGER.error("Error getting daily forecast: %s", err, exc_info=True)
             raise OpenMeteoApiError(f"Failed to get daily forecast: {err}") from err
 
     async def async_get_hourly_forecast(self) -> list[dict[str, Any]]:
@@ -218,8 +221,11 @@ class OpenMeteoClient:
 
                     return hourly_forecasts
 
+        except aiohttp.ClientError as err:
+            _LOGGER.error("Network error getting hourly forecast: %s", err, exc_info=True)
+            raise OpenMeteoApiError(f"Network error: {err}") from err
         except Exception as err:
-            _LOGGER.error("Error getting hourly forecast: %s", err)
+            _LOGGER.error("Error getting hourly forecast: %s", err, exc_info=True)
             raise OpenMeteoApiError(f"Failed to get hourly forecast: {err}") from err
 
     async def async_get_hourly_6h(self) -> list[dict[str, Any]]:
@@ -286,8 +292,11 @@ class OpenMeteoClient:
 
                     return hourly_6h
 
+        except aiohttp.ClientError as err:
+            _LOGGER.error("Network error getting hourly 6h forecast: %s", err, exc_info=True)
+            raise OpenMeteoApiError(f"Network error: {err}") from err
         except Exception as err:
-            _LOGGER.error("Error getting hourly 6h forecast: %s", err)
+            _LOGGER.error("Error getting hourly 6h forecast: %s", err, exc_info=True)
             raise OpenMeteoApiError(f"Failed to get hourly 6h forecast: {err}") from err
 
     async def async_get_additional_data(self) -> dict[str, Any]:
@@ -317,8 +326,11 @@ class OpenMeteoClient:
                         "elevation": elevation,
                     }
 
+        except aiohttp.ClientError as err:
+            _LOGGER.error("Network error getting additional data: %s", err, exc_info=True)
+            raise OpenMeteoApiError(f"Network error: {err}") from err
         except Exception as err:
-            _LOGGER.error("Error getting additional data: %s", err)
+            _LOGGER.error("Error getting additional data: %s", err, exc_info=True)
             raise OpenMeteoApiError(f"Failed to get additional data: {err}") from err
 
     @staticmethod
