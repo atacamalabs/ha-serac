@@ -1,8 +1,8 @@
 # Serac Integration - Project Status
 
 **Last Updated**: 2026-02-12
-**Current Version**: v1.4.0 🎉
-**Status**: Enhanced Documentation & Diagnostics Complete ✅
+**Current Version**: v1.5.0 🎉
+**Status**: Code Quality & Testing Complete ✅
 **Repository**: https://github.com/atacamalabs/ha-serac
 **Roadmap**: See ROADMAP.md for development plan
 
@@ -17,17 +17,33 @@ Serac (formerly "Better Mountain Weather") is a Home Assistant integration provi
 
 ---
 
-## ✅ Version 1.4.0 - Enhanced Documentation & Diagnostics (CURRENT)
+## ✅ Version 1.5.0 - Code Quality & Testing (CURRENT)
 
-### 🎉 What's New in v1.4.0
+### 🎉 What's New in v1.5.0
 
-**v1.4.0 (Latest):**
+**v1.5.0 (Latest):**
+- 🔄 **Error retry logic** - Exponential backoff for network errors (3 attempts: 1s, 2s, 4s)
+- 📊 **Enhanced logging** - Timing metrics, structured logs with context
+- 🧪 **Unit tests** - 29 tests covering retry logic, coordinators, config flow
+- 🔍 **Test infrastructure** - pytest with asyncio, fixtures for API clients
+- 🛡️ **Improved resilience** - Smart retry (network errors yes, auth errors no)
+- ⚡ **Better monitoring** - Log timing for API calls and coordinator updates
+
+### 🎉 What's New in v1.4.x Series
+
+**v1.4.2:**
+- 🐛 **Fixed diagnostics** - Type checking for timestamp attributes
+
+**v1.4.1:**
+- 🐛 **Fixed diagnostics** - Proper attribute existence checks
+
+**v1.4.0:**
 - 📚 **Enhanced documentation** - FAQ section with 10 common questions
 - 🔧 **Expanded troubleshooting** - 8 detailed troubleshooting sections
 - 🇫🇷 **French translation** - Complete UI translation (config flow, options, errors)
 - 📝 **CONTRIBUTING.md** - Comprehensive developer guide
 - 🔍 **Diagnostics support** - Download integration diagnostics for debugging
-- 📸 **Screenshot infrastructure** - Ready for visual documentation (images pending)
+- 📸 **Configuration screenshots** - 4 screenshots documenting setup flow
 
 ### 🎉 What's New in v1.3.0
 
@@ -256,17 +272,22 @@ custom_components/serac/
 - **Status**: Shipped in v1.3.0, HA UI pending brands approval
 - **PR**: https://github.com/home-assistant/brands/pull/9547
 
-### Priority 3: Enhanced Documentation 📚
-- Add screenshots to README
-- FAQ section
-- French translation
-- **Estimated effort**: 3-4 hours
+### ✅ Priority 3: Enhanced Documentation (COMPLETE)
+- ✅ FAQ section (10 questions)
+- ✅ Expanded troubleshooting (8 sections)
+- ✅ French translation (complete UI)
+- ✅ CONTRIBUTING.md developer guide
+- ✅ Configuration screenshots (4 of 8)
+- **Status**: Shipped in v1.4.0
+- **Note**: Lovelace dashboard screenshots deferred for later
 
-### Priority 4: Code Quality & Diagnostics 🔧
-- Add diagnostics.py
-- Unit tests
-- Error retry logic
-- **Estimated effort**: 4-6 hours
+### ✅ Priority 4: Code Quality & Diagnostics (COMPLETE)
+- ✅ Diagnostics support (v1.4.0-1.4.2)
+- ✅ Error retry logic with exponential backoff
+- ✅ Enhanced logging with timing metrics
+- ✅ Unit tests (29 tests: retry, coordinators, config flow)
+- ✅ Test infrastructure (pytest + asyncio)
+- **Status**: Shipped in v1.5.0
 
 ### Priority 5: Weather Alerts (Vigilance) ⚠️
 - Météo-France Vigilance API integration
@@ -285,6 +306,11 @@ custom_components/serac/
 
 ## 📚 Version History
 
+- **v1.5.0** (2026-02-12): 🧪 Error retry logic, enhanced logging, 29 unit tests
+- **v1.4.2** (2026-02-12): 🐛 Fix diagnostics timestamp type error
+- **v1.4.1** (2026-02-12): 🐛 Fix diagnostics attribute check
+- **v1.4.0** (2026-02-12): 📚 Enhanced docs, French translation, diagnostics, screenshots
+- **v1.3.0** (2026-02-12): 🎨 Custom logo and branding
 - **v1.2.6** (2026-02-12): ✨ Device cleanup for removed massifs
 - **v1.2.5** (2026-02-12): ✨ Entity cleanup for removed massifs
 - **v1.2.4** (2026-02-12): 🐛 Fix TypeError in OptionsFlow constructor
@@ -365,11 +391,11 @@ tail -f /config/home-assistant.log | grep serac
 
 ## 🎯 Next Steps
 
-See **ROADMAP.md** for comprehensive development plan (v1.3.0 and beyond).
+See **ROADMAP.md** for comprehensive development plan.
 
-**Immediate next**: Logo & Branding (Priority 2 - quick win)
+**Immediate next**: Priority 5 - Weather Alerts (Vigilance API)
 
 ---
 
-**Status**: Production ready v1.2.6 released 🎉
-**Next milestone**: v1.3.0 (Logo + Enhanced Documentation)
+**Status**: Production ready v1.5.0 released 🎉
+**Next milestone**: v1.6.0 (Weather Alerts / Vigilance API)
