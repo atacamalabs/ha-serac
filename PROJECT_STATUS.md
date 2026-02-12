@@ -1,8 +1,8 @@
 # Serac Integration - Project Status
 
 **Last Updated**: 2026-02-12
-**Current Version**: v1.6.0 🎉
-**Status**: Weather Alerts (Vigilance) Complete ✅
+**Current Version**: v1.7.1 🎉
+**Status**: Vigilance Enhancements & Fixes Complete ✅
 **Repository**: https://github.com/atacamalabs/ha-serac
 **Roadmap**: See ROADMAP.md for development plan
 
@@ -17,7 +17,32 @@ Serac (formerly "Better Mountain Weather") is a Home Assistant integration provi
 
 ---
 
-## ✅ Version 1.6.0 - Weather Alerts (Vigilance) (CURRENT)
+## ✅ Version 1.7.x - Vigilance Enhancements (CURRENT)
+
+### 🎉 What's New in v1.7.1
+
+**v1.7.1 (Latest):**
+- 🐛 **Fixed entity ID validation** - Sanitizes special characters (é, à, etc.) from entity prefixes
+- 🔧 **Unicode handling** - Proper accent removal using unicodedata normalization
+- ✅ **HA 2027.2.0 compatible** - Resolves future deprecation warnings
+- 🛡️ **All sensor types** - Fix applied to weather, avalanche, and vigilance sensors
+
+**Technical Details:**
+- Added `_sanitize_entity_id_part()` utility function
+- Removes diacritics/accents from entity prefixes before entity ID construction
+- Display names retain original characters (e.g., "Chamonix Dévoluy")
+- Entity IDs now fully compliant: lowercase, numbers, underscores only
+
+### 🎉 What's New in v1.7.0
+
+**v1.7.0:**
+- 🌪️ **Individual phenomenon sensors** - 9 new sensors (wind, avalanche, rain/flood, etc.)
+- 📝 **Alert summary sensor** - Human-readable active alerts (e.g., "Yellow Alert: Wind, Rain/Flood")
+- 🎯 **Easier card integration** - Each phenomenon has its own sensor with level (1-4)
+- 🏷️ **Better icons** - Phenomenon-specific icons for each sensor type
+- 📊 **12 total vigilance sensors** - 2 overall + 1 summary + 9 phenomena
+
+### 🎉 What's New in v1.6.x Series
 
 ### 🎉 What's New in v1.6.0
 
@@ -320,6 +345,10 @@ custom_components/serac/
 
 ## 📚 Version History
 
+- **v1.7.1** (2026-02-12): 🐛 Fixed entity ID validation, unicode character sanitization
+- **v1.7.0** (2026-02-12): 🌪️ Individual phenomenon sensors, alert summary sensor (12 vigilance sensors total)
+- **v1.6.2** (2026-02-12): 🐛 Fixed Vigilance API data extraction
+- **v1.6.1** (2026-02-12): 🔍 Added debug logging for Vigilance API
 - **v1.6.0** (2026-02-12): 🚨 Weather Alerts (Vigilance API), department detection, 2 new sensors
 - **v1.5.0** (2026-02-12): 🧪 Error retry logic, enhanced logging, 29 unit tests
 - **v1.4.2** (2026-02-12): 🐛 Fix diagnostics timestamp type error
@@ -416,5 +445,5 @@ See **ROADMAP.md** for comprehensive development plan.
 
 ---
 
-**Status**: Production ready v1.6.0 released 🎉
+**Status**: Production ready v1.7.1 released 🎉
 **Next milestone**: TBD - Feature requests welcome!
