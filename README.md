@@ -163,9 +163,6 @@ entity: weather.serac_chamonix
 forecast_type: daily
 ```
 
-<!-- ![Weather Card](docs/screenshots/weather-card.png) -->
-*Screenshot: Weather forecast card - Coming soon*
-
 ### Sensor Cards
 
 Display current mountain conditions:
@@ -182,9 +179,6 @@ entities:
   - entity: sensor.serac_chamonix_elevation
 ```
 
-<!-- ![Weather Sensors](docs/screenshots/weather-sensors.png) -->
-*Screenshot: Weather sensor card - Coming soon*
-
 ### Avalanche Risk Card
 
 Monitor avalanche conditions for a specific massif:
@@ -199,9 +193,6 @@ entities:
   - entity: sensor.serac_chamonix_aravis_avalanche_risk_low_altitude
   - entity: sensor.serac_chamonix_aravis_avalanche_accidental
 ```
-
-<!-- ![Avalanche Sensors](docs/screenshots/avalanche-sensors.png) -->
-*Screenshot: Avalanche risk card - Coming soon*
 
 ### Automation: High Wind Alert
 

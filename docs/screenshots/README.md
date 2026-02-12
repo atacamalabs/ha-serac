@@ -170,4 +170,13 @@ pngquant --quality=80-95 --ext .png --force *.png
 
 ---
 
-**Status**: Screenshots not yet taken. These will be added in a future commit.
+## Status
+
+**Completed** (4 screenshots):
+- ✅ config-step1.png - Location Setup
+- ✅ config-step2.png - Entity Prefix
+- ✅ config-step3.png - Massif Selection
+- ✅ devices-services.png - Integration Added
+
+**Deferred** (4 screenshots):
+- Screenshots 5-8 (Lovelace dashboard cards) will be added in a future update
