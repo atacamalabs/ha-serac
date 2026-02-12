@@ -82,30 +82,26 @@ Serac uses a simple 3-step configuration flow:
 - Enter GPS coordinates (latitude, longitude)
 - Example: Chamonix (45.9237, 6.8694)
 
-<!-- ![Configuration Step 1](docs/screenshots/config-step1.png) -->
-*Screenshot: Location setup - Coming soon*
+![Configuration Step 1](docs/screenshots/config-step1.png)
 
 #### Step 2: Entity Prefix
 - Choose a short identifier for your entities
 - Suggested automatically from your location name
 - Used in entity IDs: `sensor.serac_{your_prefix}_temperature`
 
-<!-- ![Configuration Step 2](docs/screenshots/config-step2.png) -->
-*Screenshot: Entity prefix selection - Coming soon*
+![Configuration Step 2](docs/screenshots/config-step2.png)
 
 #### Step 3: Avalanche Data (Optional)
 - Add Météo-France BRA API token (optional)
 - Select massifs for avalanche bulletins (0-35 massifs)
 - Skip if you only want weather data
 
-<!-- ![Configuration Step 3](docs/screenshots/config-step3.png) -->
-*Screenshot: Massif selection - Coming soon*
+![Configuration Step 3](docs/screenshots/config-step3.png)
 
 #### Configuration Complete!
 Once configured, Serac appears in your Devices & Services with a custom logo.
 
-<!-- ![Devices & Services](docs/screenshots/devices-services.png) -->
-*Screenshot: Integration added - Coming soon*
+![Devices & Services](docs/screenshots/devices-services.png)
 
 ### Finding GPS Coordinates
 
