@@ -77,7 +77,7 @@ class SeracConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> SeracOptionsFlow:
         """Get the options flow for this handler."""
-        return SeracOptionsFlow(config_entry)
+        return SeracOptionsFlow()
 
     def _validate_prefix(self, prefix: str) -> bool:
         """Validate entity prefix format.
