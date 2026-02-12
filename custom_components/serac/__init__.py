@@ -7,7 +7,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 
 from .api.airquality_client import AirQualityClient
 from .api.bra_client import BraApiError, BraClient
@@ -29,12 +29,13 @@ PLATFORMS: list[Platform] = [Platform.WEATHER, Platform.SENSOR]
 
 
 async def async_cleanup_removed_massifs(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Remove entities for massifs that are no longer configured.
+    """Remove entities and devices for massifs that are no longer configured.
 
     When users remove massifs via options flow, we need to clean up
-    the orphaned entities from the entity registry.
+    the orphaned entities and devices from the registries.
     """
     entity_registry = er.async_get(hass)
+    device_registry = dr.async_get(hass)
     latitude = entry.data[CONF_LATITUDE]
     longitude = entry.data[CONF_LONGITUDE]
 
@@ -44,6 +45,9 @@ async def async_cleanup_removed_massifs(hass: HomeAssistant, entry: ConfigEntry)
     current_massifs = [int(m) if isinstance(m, str) else m for m in current_massifs]
 
     _LOGGER.debug("Current massifs: %s", current_massifs)
+
+    # Track which massif devices should be removed
+    massifs_to_remove = set()
 
     # Find all BRA entities for this config entry
     for entity_entry in list(entity_registry.entities.values()):
@@ -68,12 +72,26 @@ async def async_cleanup_removed_massifs(hass: HomeAssistant, entry: ConfigEntry)
                                     entity_entry.entity_id,
                                 )
                                 entity_registry.async_remove(entity_entry.entity_id)
+                                massifs_to_remove.add(massif_id)
                 except (ValueError, IndexError) as err:
                     _LOGGER.debug(
                         "Could not parse massif_id from unique_id %s: %s",
                         entity_entry.unique_id,
                         err,
                     )
+
+    # Remove devices for removed massifs
+    # Device identifier format: (DOMAIN, f"serac_{latitude}_{longitude}_massif_{massif_id}")
+    for massif_id in massifs_to_remove:
+        device_identifier = (DOMAIN, f"serac_{latitude}_{longitude}_massif_{massif_id}")
+        device_entry = device_registry.async_get_device(identifiers={device_identifier})
+        if device_entry:
+            _LOGGER.info(
+                "Removing device for removed massif %s: %s",
+                massif_id,
+                device_entry.name,
+            )
+            device_registry.async_remove_device(device_entry.id)
 
 
 async def async_migrate_entity_ids(hass: HomeAssistant, entry: ConfigEntry) -> None:
