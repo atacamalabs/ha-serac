@@ -30,12 +30,17 @@ Serac is a comprehensive Home Assistant integration providing detailed mountain 
   - PM2.5, PM10, NO₂, O₃, SO₂ levels
 
 ### 🚨 Weather Alerts (Vigilance)
-- **2 vigilance sensors** for Météo-France weather alerts:
+- **12 vigilance sensors** for Météo-France weather alerts:
   - Overall alert level (1-4 scale: Green/Yellow/Orange/Red)
-  - Alert color code for quick status check
+  - Alert color code and human-readable summary
+  - 9 individual phenomenon sensors (wind, avalanche, rain/flood, etc.)
+- **3 binary sensors** for easy automation triggers:
+  - `has_active_alert` - Any alert above green
+  - `has_orange_alert` - Orange or red alerts
+  - `has_red_alert` - Red alerts only
+- **Manual update service** - `serac.update_vigilance` to force refresh
 - **Department-based alerts** - Automatically detects French department from GPS coordinates
-- **Detailed phenomena tracking** - Wind, rain/flood, thunderstorms, snow/ice, fog, extreme temps
-- **Rich attributes** - All individual phenomena levels available for automations
+- **Enhanced attributes** - `active_alerts`, `alert_count`, `highest_level` for powerful automations
 - **Requires separate API token** - Météo-France Vigilance API subscription needed
 
 ### ⚠️ Avalanche Bulletins
@@ -224,16 +229,34 @@ Display Météo-France Vigilance weather alerts:
 type: entities
 title: Weather Alerts - Haute-Savoie
 entities:
-  - entity: sensor.serac_chamonix_vigilance_level
-  - entity: sensor.serac_chamonix_vigilance_color
+  - entity: sensor.serac_home_vigilance_summary
+  - entity: sensor.serac_home_vigilance_level
+  - entity: sensor.serac_home_vigilance_color
+  - entity: binary_sensor.serac_home_has_active_alert
+  - entity: binary_sensor.serac_home_has_orange_alert
+  - entity: binary_sensor.serac_home_has_red_alert
 ```
 
-**Sensor Attributes** include detailed phenomena data:
+**Individual Phenomenon Sensors** for granular monitoring:
+```yaml
+type: entities
+title: Alert Phenomena
+entities:
+  - entity: sensor.serac_home_vigilance_phenom_wind
+  - entity: sensor.serac_home_vigilance_phenom_avalanche
+  - entity: sensor.serac_home_vigilance_phenom_rain_flood
+  - entity: sensor.serac_home_vigilance_phenom_snow_ice
+  - entity: sensor.serac_home_vigilance_phenom_thunderstorm
+```
+
+**Enhanced Sensor Attributes** for powerful automations:
+- `active_alerts`: List of active alerts with phenomenon, name, level, color
+- `alert_count`: Number of active (non-green) alerts
+- `highest_level`: Maximum alert level currently active (1-4)
 - `department`: French department code (e.g., "74")
 - `department_name`: Department name (e.g., "Haute-Savoie")
-- `phenomena`: Individual alert levels for wind, rain/flood, snow/ice, thunderstorms, fog, etc.
-- `wind_level`, `rain_flood_level`, `snow_ice_level`: Quick access to specific phenomena
-- `update_time`: When alerts were last updated
+- `phenomena`: Complete alert data for all phenomena
+- `wind_level`, `avalanche_level`, etc.: Quick access to specific phenomena
 
 ### Automation: High Wind Alert
 
@@ -267,44 +290,129 @@ automation:
           message: "Avalanche risk level {{ states('sensor.serac_chamonix_aravis_avalanche_risk_today') }} in Aravis today!"
 ```
 
-### Automation: Weather Vigilance Alert
+### Automation: Any Weather Alert (Binary Sensor)
 
-Trigger notification when weather alerts reach Orange or Red level:
+Using the new binary sensors for simple, reliable triggers:
 
 ```yaml
 automation:
-  - alias: "Severe Weather Alert"
+  - alias: "Weather Alert Notification"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.serac_home_has_active_alert
+        to: "on"
+    action:
+      - service: notify.mobile_app_iphone
+        data:
+          title: "⚠️ Weather Alert"
+          message: >
+            {{ state_attr('binary_sensor.serac_home_has_active_alert', 'alert_count') }}
+            alert(s): {{ states('sensor.serac_home_vigilance_summary') }}
+```
+
+### Automation: Dangerous Weather (Orange/Red Alerts)
+
+Trigger on serious weather conditions:
+
+```yaml
+automation:
+  - alias: "Dangerous Weather Alert"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.serac_home_has_orange_alert
+        to: "on"
+    action:
+      - service: notify.mobile_app_iphone
+        data:
+          title: "🚨 Dangerous Weather"
+          message: "{{ states('sensor.serac_home_vigilance_summary') }}"
+          data:
+            push:
+              sound:
+                name: "default"
+                critical: 1
+                volume: 1.0
+```
+
+### Automation: Emergency Alert with TTS
+
+Use text-to-speech for red alerts:
+
+```yaml
+automation:
+  - alias: "Red Alert TTS Announcement"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.serac_home_has_red_alert
+        to: "on"
+    action:
+      - service: tts.google_translate_say
+        entity_id: media_player.home
+        data:
+          message: >
+            Attention! Emergency weather alert:
+            {{ states('sensor.serac_home_vigilance_summary') }}
+      - service: light.turn_on
+        target:
+          entity_id: light.all_lights
+        data:
+          flash: "long"
+          rgb_color: [255, 0, 0]
+```
+
+### Automation: Specific Phenomenon Alert
+
+Monitor individual weather phenomena:
+
+```yaml
+automation:
+  - alias: "Avalanche Risk Alert"
     trigger:
       - platform: numeric_state
-        entity_id: sensor.serac_chamonix_vigilance_level
-        above: 2  # Orange (3) or Red (4)
+        entity_id: sensor.serac_home_vigilance_phenom_avalanche
+        above: 2  # Yellow or above
     action:
       - service: notify.mobile_app
         data:
-          title: "🚨 Severe Weather Alert"
+          title: "❄️ Avalanche Alert"
           message: >
-            {{ state_attr('sensor.serac_chamonix_vigilance_level', 'department_name') }}
-            is under {{ states('sensor.serac_chamonix_vigilance_color') }} alert!
-            Wind: {{ state_attr('sensor.serac_chamonix_vigilance_level', 'wind_color') | default('green') }}
-            Snow/Ice: {{ state_attr('sensor.serac_chamonix_vigilance_level', 'snow_ice_color') | default('green') }}
+            Avalanche risk: {{ states('sensor.serac_home_vigilance_phenom_avalanche') | int }}
+            ({{ state_attr('sensor.serac_home_vigilance_summary', 'phenomena')['avalanche']['color'] }})
 ```
 
-### Automation: High Wind Vigilance
+### Automation: Conditional Dashboard Card
 
-Trigger on high wind phenomenon specifically:
+Show alert card only when alerts are active:
 
 ```yaml
-automation:
-  - alias: "High Wind Vigilance"
-    trigger:
-      - platform: template
-        value_template: "{{ state_attr('sensor.serac_chamonix_vigilance_level', 'wind_level') | int > 2 }}"
-    action:
-      - service: notify.mobile_app
-        data:
-          title: "💨 Wind Alert"
-          message: "High wind alert ({{ state_attr('sensor.serac_chamonix_vigilance_level', 'wind_color') }}) in effect!"
+type: conditional
+conditions:
+  - entity: binary_sensor.serac_home_has_active_alert
+    state: "on"
+card:
+  type: markdown
+  content: |
+    ## ⚠️ Weather Alerts
+    {{ states('sensor.serac_home_vigilance_summary') }}
+
+    **Active Alerts:** {{ state_attr('binary_sensor.serac_home_has_active_alert', 'alert_count') }}
+    **Highest Level:** {{ state_attr('sensor.serac_home_vigilance_summary', 'highest_level') }}
+
+    {% for alert in state_attr('binary_sensor.serac_home_has_active_alert', 'active_alerts') %}
+    - **{{ alert.name }}**: {{ alert.color | title }} (Level {{ alert.level }})
+    {% endfor %}
 ```
+
+### Service: Manual Vigilance Update
+
+Force an immediate refresh of weather alert data:
+
+```yaml
+# Service call to manually update vigilance data
+service: serac.update_vigilance
+```
+
+Use in automations or scripts when you need fresh data on-demand.
 
 ---
 
