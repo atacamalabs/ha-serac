@@ -28,6 +28,54 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.WEATHER, Platform.SENSOR]
 
 
+async def async_cleanup_removed_massifs(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Remove entities for massifs that are no longer configured.
+
+    When users remove massifs via options flow, we need to clean up
+    the orphaned entities from the entity registry.
+    """
+    entity_registry = er.async_get(hass)
+    latitude = entry.data[CONF_LATITUDE]
+    longitude = entry.data[CONF_LONGITUDE]
+
+    # Get currently configured massif IDs
+    current_massifs = entry.data.get(CONF_MASSIF_IDS, [])
+    # Convert to integers for comparison
+    current_massifs = [int(m) if isinstance(m, str) else m for m in current_massifs]
+
+    _LOGGER.debug("Current massifs: %s", current_massifs)
+
+    # Find all BRA entities for this config entry
+    for entity_entry in list(entity_registry.entities.values()):
+        if entity_entry.config_entry_id == entry.entry_id:
+            # Check if this is a BRA sensor (has massif_id in unique_id)
+            if entity_entry.unique_id and "avalanche_" in entity_entry.unique_id:
+                # Extract massif_id from unique_id
+                # Format: serac_{lat}_{lon}_{massif_id}_avalanche_*
+                parts = entity_entry.unique_id.split("_")
+                try:
+                    # Find the massif_id (comes before "avalanche" in unique_id)
+                    if "avalanche" in parts:
+                        avalanche_idx = parts.index("avalanche")
+                        if avalanche_idx > 0:
+                            massif_id = int(parts[avalanche_idx - 1])
+
+                            # Remove entity if massif is no longer configured
+                            if massif_id not in current_massifs:
+                                _LOGGER.info(
+                                    "Removing entity for removed massif %s: %s",
+                                    massif_id,
+                                    entity_entry.entity_id,
+                                )
+                                entity_registry.async_remove(entity_entry.entity_id)
+                except (ValueError, IndexError) as err:
+                    _LOGGER.debug(
+                        "Could not parse massif_id from unique_id %s: %s",
+                        entity_entry.unique_id,
+                        err,
+                    )
+
+
 async def async_migrate_entity_ids(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Migrate entity IDs from old naming pattern to new consistent pattern.
 
@@ -263,6 +311,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Migrate old entity IDs and remove unavailable sensors
     await async_migrate_entity_ids(hass, entry)
+
+    # Clean up entities for removed massifs (from options flow)
+    await async_cleanup_removed_massifs(hass, entry)
 
     # Forward setup to platforms
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
