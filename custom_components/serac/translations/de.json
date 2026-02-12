@@ -1,0 +1,72 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Serac - Standort",
+        "description": "Geben Sie einen Namen für Ihren Standort und die GPS-Koordinaten ein, um Wettervorhersagen zu erhalten.",
+        "data": {
+          "location_name": "Standortname",
+          "latitude": "Breitengrad",
+          "longitude": "Längengrad"
+        },
+        "data_description": {
+          "location_name": "Ein Name für diesen Standort (z.B. 'Zermatt')",
+          "latitude": "Breitengrad-Koordinate (z.B. 46.0207 für Zermatt)",
+          "longitude": "Längengrad-Koordinate (z.B. 7.7491 für Zermatt)"
+        }
+      },
+      "prefix": {
+        "title": "Entity-Präfix",
+        "description": "Wählen Sie eine kurze Kennung für Ihre Entities. Vorschlag: {suggested_prefix}\n\nBeispiel: {example_entity}",
+        "data": {
+          "entity_prefix": "Entity-Präfix"
+        },
+        "data_description": {
+          "entity_prefix": "Nur Kleinbuchstaben, Zahlen und Unterstriche. Muss mit einem Buchstaben beginnen."
+        }
+      },
+      "massifs": {
+        "title": "Lawinen & Wetterwarnungen (Optional)",
+        "description": "Fügen Sie optional Météo-France API-Token für Lawinenbulletins und Wetterwarnungen hinzu. Sie können diesen Schritt überspringen, wenn Sie nur Wetterdaten möchten.",
+        "data": {
+          "bra_token": "BRA API-Token (optional)",
+          "massif_ids": "Massiv auswählen (optional)",
+          "vigilance_token": "Vigilance API-Token (optional)"
+        },
+        "data_description": {
+          "bra_token": "Météo-France API-Schlüssel für Lawinenbulletins",
+          "massif_ids": "Wählen Sie ein oder mehrere Massive für Lawinenrisikodaten",
+          "vigilance_token": "Météo-France API-Schlüssel für Wetterwarnungen (Vigilance). Separates Abonnement erforderlich."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur Wetter-API nicht möglich. Bitte überprüfen Sie Ihre Koordinaten und versuchen Sie es erneut.",
+      "location_not_supported": "Dieser Standort wird nicht unterstützt. Diese Integration funktioniert für Standorte in Frankreich und Andorra.",
+      "invalid_prefix": "Ungültiges Präfix. Muss mit einem Buchstaben beginnen und darf nur Kleinbuchstaben, Zahlen und Unterstriche enthalten (1-20 Zeichen).",
+      "required": "Dieses Feld ist erforderlich.",
+      "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "abort": {
+      "already_configured": "Dieser Standort ist bereits konfiguriert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Serac-Konfiguration",
+        "description": "Ändern Sie Ihre Massiv-Auswahl, Ihren BRA API-Token oder Ihren Vigilance API-Token. Die Integration wird automatisch neu geladen, um die Änderungen anzuwenden.",
+        "data": {
+          "bra_token": "BRA API-Token (optional)",
+          "massif_ids": "Massiv auswählen (optional)",
+          "vigilance_token": "Vigilance API-Token (optional)"
+        },
+        "data_description": {
+          "bra_token": "Météo-France API-Schlüssel für Lawinenbulletins. Leer lassen, um Lawinendaten zu entfernen.",
+          "massif_ids": "Wählen Sie ein oder mehrere Massive für Lawinenrisikodaten. Alle abwählen, um Lawinensensoren zu entfernen.",
+          "vigilance_token": "Météo-France API-Schlüssel für Wetterwarnungen. Leer lassen, um Vigilance-Sensoren zu entfernen."
+        }
+      }
+    }
+  }
+}

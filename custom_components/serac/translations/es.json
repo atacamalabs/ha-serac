@@ -1,0 +1,72 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Serac - Ubicación",
+        "description": "Introduce un nombre para tu ubicación y las coordenadas GPS para obtener pronósticos meteorológicos.",
+        "data": {
+          "location_name": "Nombre de ubicación",
+          "latitude": "Latitud",
+          "longitude": "Longitud"
+        },
+        "data_description": {
+          "location_name": "Un nombre para esta ubicación (ej: 'Benasque')",
+          "latitude": "Coordenada de latitud (ej: 42.6025 para Benasque)",
+          "longitude": "Coordenada de longitud (ej: 0.5292 para Benasque)"
+        }
+      },
+      "prefix": {
+        "title": "Prefijo de entidades",
+        "description": "Elige un identificador corto para tus entidades. Sugerencia: {suggested_prefix}\n\nEjemplo: {example_entity}",
+        "data": {
+          "entity_prefix": "Prefijo de entidades"
+        },
+        "data_description": {
+          "entity_prefix": "Solo letras minúsculas, números y guiones bajos. Debe comenzar con una letra."
+        }
+      },
+      "massifs": {
+        "title": "Avalanchas y Alertas meteorológicas (Opcional)",
+        "description": "Añade opcionalmente tokens API de Météo-France para boletines de avalanchas y alertas meteorológicas. Puedes omitir este paso si solo quieres datos meteorológicos.",
+        "data": {
+          "bra_token": "Token API BRA (opcional)",
+          "massif_ids": "Seleccionar macizos (opcional)",
+          "vigilance_token": "Token API Vigilance (opcional)"
+        },
+        "data_description": {
+          "bra_token": "Clave API de Météo-France para boletines de avalanchas",
+          "massif_ids": "Selecciona uno o más macizos para datos de riesgo de avalanchas",
+          "vigilance_token": "Clave API de Météo-France para alertas meteorológicas (Vigilance). Se requiere suscripción separada."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No se puede conectar a la API meteorológica. Verifica tus coordenadas e inténtalo de nuevo.",
+      "location_not_supported": "Esta ubicación no está soportada. Esta integración funciona para ubicaciones en Francia y Andorra.",
+      "invalid_prefix": "Prefijo inválido. Debe comenzar con una letra y contener solo letras minúsculas, números y guiones bajos (1-20 caracteres).",
+      "required": "Este campo es obligatorio.",
+      "unknown": "Ha ocurrido un error inesperado. Inténtalo de nuevo."
+    },
+    "abort": {
+      "already_configured": "Esta ubicación ya está configurada."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configuración de Serac",
+        "description": "Modifica tu selección de macizos, tu token API BRA o tu token API Vigilance. La integración se recargará automáticamente para aplicar los cambios.",
+        "data": {
+          "bra_token": "Token API BRA (opcional)",
+          "massif_ids": "Seleccionar macizos (opcional)",
+          "vigilance_token": "Token API Vigilance (opcional)"
+        },
+        "data_description": {
+          "bra_token": "Clave API de Météo-France para boletines de avalanchas. Deja en blanco para eliminar datos de avalanchas.",
+          "massif_ids": "Selecciona uno o más macizos para datos de riesgo de avalanchas. Deselecciona todos para eliminar sensores de avalanchas.",
+          "vigilance_token": "Clave API de Météo-France para alertas meteorológicas. Deja en blanco para eliminar sensores de vigilance."
+        }
+      }
+    }
+  }
+}

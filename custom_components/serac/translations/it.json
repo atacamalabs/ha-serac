@@ -1,0 +1,72 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Serac - Posizione",
+        "description": "Inserisci un nome per la tua posizione e le coordinate GPS per ottenere le previsioni meteo.",
+        "data": {
+          "location_name": "Nome posizione",
+          "latitude": "Latitudine",
+          "longitude": "Longitudine"
+        },
+        "data_description": {
+          "location_name": "Un nome per questa posizione (es: 'Courmayeur')",
+          "latitude": "Coordinata di latitudine (es: 45.7970 per Courmayeur)",
+          "longitude": "Coordinata di longitudine (es: 6.9686 per Courmayeur)"
+        }
+      },
+      "prefix": {
+        "title": "Prefisso entità",
+        "description": "Scegli un identificatore breve per le tue entità. Suggerimento: {suggested_prefix}\n\nEsempio: {example_entity}",
+        "data": {
+          "entity_prefix": "Prefisso entità"
+        },
+        "data_description": {
+          "entity_prefix": "Solo lettere minuscole, numeri e underscore. Deve iniziare con una lettera."
+        }
+      },
+      "massifs": {
+        "title": "Valanghe e Avvisi meteo (Opzionale)",
+        "description": "Aggiungi facoltativamente token API Météo-France per i bollettini valanghe e gli avvisi meteo. Puoi saltare questo passaggio se desideri solo i dati meteo.",
+        "data": {
+          "bra_token": "Token API BRA (opzionale)",
+          "massi_ids": "Seleziona massicci (opzionale)",
+          "vigilance_token": "Token API Vigilance (opzionale)"
+        },
+        "data_description": {
+          "bra_token": "Chiave API Météo-France per i bollettini valanghe",
+          "massif_ids": "Seleziona uno o più massicci per i dati sul rischio valanghe",
+          "vigilance_token": "Chiave API Météo-France per gli avvisi meteo (Vigilance). Abbonamento separato richiesto."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile connettersi all'API meteo. Verifica le tue coordinate e riprova.",
+      "location_not_supported": "Questa posizione non è supportata. Questa integrazione funziona per posizioni in Francia e Andorra.",
+      "invalid_prefix": "Prefisso non valido. Deve iniziare con una lettera e contenere solo lettere minuscole, numeri e underscore (1-20 caratteri).",
+      "required": "Questo campo è obbligatorio.",
+      "unknown": "Si è verificato un errore imprevisto. Riprova."
+    },
+    "abort": {
+      "already_configured": "Questa posizione è già configurata."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurazione Serac",
+        "description": "Modifica la selezione dei massicci, il token API BRA o il token API Vigilance. L'integrazione si ricaricherà automaticamente per applicare le modifiche.",
+        "data": {
+          "bra_token": "Token API BRA (opzionale)",
+          "massif_ids": "Seleziona massicci (opzionale)",
+          "vigilance_token": "Token API Vigilance (opzionale)"
+        },
+        "data_description": {
+          "bra_token": "Chiave API Météo-France per i bollettini valanghe. Lascia vuoto per rimuovere i dati valanghe.",
+          "massif_ids": "Seleziona uno o più massicci per i dati sul rischio valanghe. Deseleziona tutto per rimuovere i sensori valanghe.",
+          "vigilance_token": "Chiave API Météo-France per gli avvisi meteo. Lascia vuoto per rimuovere i sensori vigilance."
+        }
+      }
+    }
+  }
+}
