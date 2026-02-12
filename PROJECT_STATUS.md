@@ -1,8 +1,8 @@
 # Serac Integration - Project Status
 
-**Last Updated**: 2026-02-11
-**Current Version**: v1.1.0 🎉
-**Status**: v1.1.0 Release Complete ✅
+**Last Updated**: 2026-02-12
+**Current Version**: v1.2.6 🎉
+**Status**: Options Flow Complete ✅
 **Repository**: https://github.com/atacamalabs/ha-serac
 **Roadmap**: See ROADMAP.md for development plan
 
@@ -17,11 +17,35 @@ Serac (formerly "Better Mountain Weather") is a Home Assistant integration provi
 
 ---
 
-## ✅ Version 1.1.0 - All French Massifs (CURRENT)
+## ✅ Version 1.2.6 - Options Flow Complete (CURRENT)
+
+### 🎉 What's New in v1.2.x Series
+
+**v1.2.6 (Latest):**
+- ✨ **Complete cleanup** - Removes both entities AND devices for removed massifs
+- 🔧 **Device registry integration** - Proper device lifecycle management
+
+**v1.2.5:**
+- ✨ **Entity cleanup** - Automatically removes entities for removed massifs
+- 🧹 **Registry management** - Prevents orphaned entities
+
+**v1.2.4:**
+- 🐛 **Fixed TypeError** - OptionsFlow constructor call corrected
+
+**v1.2.3:**
+- 🐛 **Fixed AttributeError** - Removed incorrect __init__ override
+
+**v1.2.1:**
+- 🐛 **Fixed options flow** - Corrected voluptuous schema syntax
+
+**v1.2.0:**
+- ⚙️ **Options Flow** - Change massifs and BRA token without reinstalling
+- 🎯 **Dynamic configuration** - Add/remove massifs via UI
+- 🔄 **Automatic reload** - Changes apply immediately
 
 ### 🎉 What's New in v1.1.0
 
-**New in v1.1.0:**
+**v1.1.0:**
 - 🗺️ **All 35 French massifs supported** - Expanded from 11 to 35 massifs
 - ✅ **Northern Alps** (23 massifs) - All major ranges covered
 - ✅ **Pyrenees** (11 massifs) - Complete Pyrenees coverage
@@ -194,14 +218,16 @@ custom_components/serac/
 
 ---
 
-## 🚀 Future Enhancements (Post v1.1.0)
+## 🚀 Future Enhancements (Post v1.2.6)
 
 **See ROADMAP.md for detailed development plan**
 
-### Priority 1: Options Flow ⚙️
-- Change massifs without reinstalling (HIGHEST USER VALUE)
-- Update BRA token via UI
-- **Estimated effort**: 2-3 hours
+### ✅ Priority 1: Options Flow (COMPLETE)
+- ✅ Change massifs without reinstalling
+- ✅ Update BRA token via UI
+- ✅ Entity cleanup for removed massifs
+- ✅ Device cleanup for removed massifs
+- **Status**: Shipped in v1.2.0-v1.2.6
 
 ### Priority 2: Logo & Branding 🎨
 - Custom logo for integration (QUICK WIN)
@@ -232,6 +258,13 @@ custom_components/serac/
 
 ## 📚 Version History
 
+- **v1.2.6** (2026-02-12): ✨ Device cleanup for removed massifs
+- **v1.2.5** (2026-02-12): ✨ Entity cleanup for removed massifs
+- **v1.2.4** (2026-02-12): 🐛 Fix TypeError in OptionsFlow constructor
+- **v1.2.3** (2026-02-12): 🐛 Fix AttributeError in OptionsFlow
+- **v1.2.2** (2026-02-12): 🔧 Improved error logging
+- **v1.2.1** (2026-02-12): 🐛 Fix options flow schema syntax
+- **v1.2.0** (2026-02-12): ⚙️ Options Flow feature
 - **v1.1.0** (2026-02-11): 🗺️ All 35 French massifs supported (Alps, Pyrenees, Corsica)
 - **v1.0.1** (2026-02-11): 🐛 Fix translation placeholder error in config flow
 - **v1.0.0** (2026-02-11): 🎉 Complete rebrand to "Serac", smart entity naming, breaking changes
@@ -247,8 +280,8 @@ custom_components/serac/
 
 ### Current Limitations
 - BRA data only available in winter season (~December-May)
-- No options flow yet (must re-add integration to change massifs) - **Priority 1 for v1.2.0**
-- No custom logo yet - **Priority 2 for v1.2.0**
+- No custom logo yet - **Priority 2 for v1.3.0**
+- No diagnostics.py yet
 
 ### All Previous Issues Resolved ✅
 - ✅ Timezone handling (Europe/Paris → UTC)
@@ -305,11 +338,11 @@ tail -f /config/home-assistant.log | grep serac
 
 ## 🎯 Next Steps
 
-See **ROADMAP.md** for comprehensive development plan (v1.2.0 and beyond).
+See **ROADMAP.md** for comprehensive development plan (v1.3.0 and beyond).
 
-**Immediate next**: Implement Options Flow (Priority 1 - highest user value)
+**Immediate next**: Logo & Branding (Priority 2 - quick win)
 
 ---
 
-**Status**: Production ready v1.1.0 released 🎉
-**Next milestone**: v1.2.0 (Options Flow + Logo)
+**Status**: Production ready v1.2.6 released 🎉
+**Next milestone**: v1.3.0 (Logo + Enhanced Documentation)
