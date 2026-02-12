@@ -1,225 +1,108 @@
-# Next Steps - Post v1.0.0
+# Next Steps - Post v1.1.0
 
 **Last Updated**: 2026-02-11
-**Current Version**: v1.0.0 ✅
-**Status**: Released - Planning future enhancements
+**Current Version**: v1.1.0 ✅
+**Status**: Ready for v1.2.0 development
+**Roadmap**: See **ROADMAP.md** for comprehensive development plan
 
 ---
 
-## 🎉 v1.0.0 Release - COMPLETE
+## 🎉 Recent Releases
 
-Serac v1.0.0 has been successfully released with:
-- ✅ Complete rebrand to "Serac"
-- ✅ Repository renamed to `ha-serac`
-- ✅ Smart entity naming with user-defined prefixes
-- ✅ Improved 3-step config flow
-- ✅ Comprehensive documentation
-- ✅ Migration guide for v0.6.0 users
+### v1.1.0 - All French Massifs ✅
+- 🗺️ Expanded from 11 to 35 massifs (all of France)
+- ✅ Northern Alps (23), Pyrenees (11), Corsica (1)
+- 📝 Updated documentation
 
----
+### v1.0.1 - Translation Fix ✅
+- 🐛 Fixed translation placeholder error in config flow
+- 📚 Added cache clearing instructions
 
-## 🚀 Future Enhancements
-
-### Priority 1: Logo & Branding 🎨
-
-**Goal**: Add visual identity to Serac
-
-**Tasks:**
-- [ ] Design or source a logo (mountain/ice/weather themed)
-- [ ] Create 256×256 PNG with transparency
-- [ ] Add logo to README.md header
-- [ ] Add icon.png to integration folder
-- [ ] Update HACS listing appearance
-
-**Estimated effort**: 1-2 hours (once logo is ready)
+### v1.0.0 - Complete Rebrand ✅
+- 🏔️ Rebranded to "Serac"
+- 🆔 Smart entity naming with user-defined prefixes
+- 📦 Repository renamed to `ha-serac`
+- 🎨 Improved 3-step config flow
 
 ---
 
-### Priority 2: Options Flow ⚙️
+## 🎯 Development Roadmap
 
-**Goal**: Allow users to change configuration without reinstalling
+**See ROADMAP.md for detailed implementation plans, code examples, and testing strategies.**
 
-**Features:**
-- Change selected massifs
-- Add/remove BRA token
-- (Optional) Change entity prefix - requires entity migration
+### v1.2.0 Target (1-2 weeks)
 
-**Implementation:**
-```python
-# config_flow.py
-class SeracOptionsFlow(config_entries.OptionsFlow):
-    async def async_step_init(self, user_input=None):
-        """Manage options."""
-        # Show massif multi-select
-        # Allow BRA token update
-        # Handle coordinator reload
-```
+**Priority 1: Options Flow ⚙️** (2-3 hours)
+- Change massifs without reinstalling
+- Update BRA token via UI
+- Highest user value
 
-**Files to modify:**
-- `config_flow.py` - Add OptionsFlowHandler class
-- `__init__.py` - Handle config entry updates, reload coordinators
+**Priority 2: Logo & Branding 🎨** (1-2 hours)
+- Custom 256×256 icon.png
+- Visual identity for HACS/HA
+- Quick win
 
-**Estimated effort**: 2-3 hours
+### v1.3.0 Target (2-3 weeks)
 
----
+**Priority 3: Enhanced Documentation 📚** (3-4 hours)
+- Screenshots for all config steps
+- FAQ section
+- French translation
+- Troubleshooting guide
 
-### Priority 3: Expand Massif Support 🗺️
+**Priority 4: Diagnostics 🔧** (1 hour)
+- Add diagnostics.py
+- Export coordinator status
+- Easier issue debugging
 
-**Goal**: Support all French massifs for avalanche bulletins
+### Future Backlog
 
-**Current**: 11 massifs (Haute-Savoie/Savoie)
-**Target**: 40+ massifs (all of France)
-
-**Massif groups to add:**
-- **Northern Alps** (12 more): Chartreuse, Belledonne, Vercors, Oisans, etc.
-- **Southern Alps** (6): Queyras, Dévoluy, Champsaur, Ubaye, Mercantour, etc.
-- **Pyrenees** (16): All Pyrenees massifs
-- **Corsica** (1): Corse
-
-**Implementation:**
-- Update `MASSIF_IDS` in `const.py`
-- Test BRA API with new massif IDs
-- Update documentation
-
-**Estimated effort**: 2-3 hours
+- Code quality improvements (tests, error handling)
+- Advanced features (hourly risk, snow depth, alerts)
+- Multi-language support (German, Italian)
+- Custom Lovelace card
 
 ---
 
-### Priority 4: Enhanced Documentation 📚
+## 🚀 Immediate Next Action
 
-**Improvements needed:**
-- [ ] Add screenshots to README
-  - Config flow steps
-  - Weather card example
-  - Sensor cards
-  - Avalanche risk display
-- [ ] Create troubleshooting guide with common issues
-- [ ] Add FAQ section
-- [ ] Developer documentation for contributors
-- [ ] French translation (translations/fr.json)
+**Implement Options Flow** - Start with OptionsFlowHandler in config_flow.py
 
-**Estimated effort**: 3-4 hours
+**Why Options Flow First:**
+1. Highest user value (eliminates reinstall requirement)
+2. Enables experimentation with different massifs
+3. No breaking changes required
+4. Builds on existing reload pattern
+
+**Reference**: See ROADMAP.md → Priority 1 for detailed implementation plan
 
 ---
 
-### Nice-to-Have Features
+## 📝 Session Notes
 
-#### Diagnostics Support
-- Add `diagnostics.py` file
-- Export configuration (redact tokens)
-- Include coordinator status
-- Sample API responses
-- Update history
+**Today's Progress** (2026-02-11):
+- ✅ Released v1.1.0 with all 35 French massifs
+- ✅ Created comprehensive development roadmap (ROADMAP.md)
+- ✅ Updated all project documentation
+- 🔄 Ready to start Options Flow implementation tomorrow
 
-#### Enhanced Error Handling
-- Retry logic with exponential backoff
-- Better rate limit detection
-- User-friendly error messages
-- Network timeout improvements
-
-#### Advanced Features
-- Hourly avalanche risk evolution
-- Snow depth sensors (if data available)
-- Avalanche bulletin PDF links
-- Weather alerts/warnings
-- Custom update intervals
-- Historical data tracking
-
-#### Multi-language Support
-- French UI (translations/fr.json)
-- German UI (for Swiss Alps users)
-- Italian UI (for Italian Alps users)
+**For Next Session**:
+1. Review ROADMAP.md → Priority 1 (Options Flow)
+2. Implement OptionsFlowHandler in config_flow.py
+3. Test massif add/remove scenarios
+4. Update strings.json with options UI text
 
 ---
 
-## 🐛 Known Issues to Address
+## 🔗 Related Files
 
-### Current Limitations
-1. **No options flow** - Must reinstall to change massifs
-   - Solution: Implement options flow (Priority 2)
-
-2. **Limited massif coverage** - Only 11 massifs
-   - Solution: Expand support (Priority 3)
-
-3. **No logo** - Generic appearance in HACS
-   - Solution: Add branding (Priority 1)
-
----
-
-## 📊 Success Metrics
-
-### v1.0.0 Goals (Achieved ✅)
-- [x] Clean entity naming
-- [x] Professional branding
-- [x] Comprehensive documentation
-- [x] Migration guide for existing users
-- [x] Breaking changes communicated clearly
-
-### v1.1.0 Goals (Options Flow)
-- [ ] Users can change massifs without reinstalling
-- [ ] BRA token can be added/removed easily
-- [ ] No breaking changes
-- [ ] Backward compatible with v1.0.0
-
-### v1.2.0 Goals (Full Coverage)
-- [ ] All 40+ French massifs supported
-- [ ] Logo and branding complete
-- [ ] Enhanced documentation with screenshots
-- [ ] Troubleshooting guide available
-
----
-
-## 🔗 Related Documentation
-
-- **PROJECT_STATUS.md** - Current implementation status
-- **README.md** - User-facing documentation
+- **ROADMAP.md** - Full development plan with code examples
+- **PROJECT_STATUS.md** - Current v1.1.0 status and architecture
+- **README.md** - User documentation
 - **MIGRATION_v1.md** - Migration guide from v0.6.0
-- **DEVELOPMENT.md** - Development guidelines (if exists)
 
 ---
 
-## 📝 Notes for Future Development
+**Status**: v1.1.0 released, planning v1.2.0 🎉
 
-### Breaking Changes to Avoid
-- Don't change domain again
-- Don't change entity ID patterns
-- Keep config data structure backward compatible
-- Use entity migration for structural changes
-
-### Best Practices
-- Always test with multiple massif configurations (0, 1, multiple)
-- Check out-of-season BRA behavior
-- Verify timezone handling
-- Test entity prefix validation
-- Document all breaking changes clearly
-
-### Community Feedback
-- Monitor GitHub issues for feature requests
-- Track most requested features
-- Prioritize based on user needs
-- Engage with Home Assistant community
-
----
-
-## 🎯 Immediate Next Actions
-
-1. **Monitor v1.0.0 release**
-   - Watch for issues from users migrating
-   - Respond to questions quickly
-   - Fix critical bugs promptly (v1.0.1 hotfix if needed)
-
-2. **Plan next release**
-   - Decide: Logo first or Options flow first?
-   - Create milestone for v1.1.0
-   - Gather feedback from community
-
-3. **Improve visibility**
-   - Post to Home Assistant community forum
-   - Share in relevant subreddits (r/homeassistant)
-   - Update HACS listing if possible
-
----
-
-**Status**: v1.0.0 released successfully 🎉
-
-**Next milestone**: v1.1.0 (Options Flow) or v1.1.0 (Logo & Branding)
+**Next milestone**: v1.2.0 (Options Flow + Logo) - Target: 1-2 weeks

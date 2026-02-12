@@ -1,9 +1,10 @@
 # Serac Integration - Project Status
 
 **Last Updated**: 2026-02-11
-**Current Version**: v1.0.0 🎉
-**Status**: v1.0.0 Release Complete ✅
+**Current Version**: v1.1.0 🎉
+**Status**: v1.1.0 Release Complete ✅
 **Repository**: https://github.com/atacamalabs/ha-serac
+**Roadmap**: See ROADMAP.md for development plan
 
 ## 🎯 Quick Overview
 
@@ -16,9 +17,18 @@ Serac (formerly "Better Mountain Weather") is a Home Assistant integration provi
 
 ---
 
-## ✅ Version 1.0.0 - Complete Rebrand (RELEASED)
+## ✅ Version 1.1.0 - All French Massifs (CURRENT)
 
-### 🎉 What's New in v1.0.0
+### 🎉 What's New in v1.1.0
+
+**New in v1.1.0:**
+- 🗺️ **All 35 French massifs supported** - Expanded from 11 to 35 massifs
+- ✅ **Northern Alps** (23 massifs) - All major ranges covered
+- ✅ **Pyrenees** (11 massifs) - Complete Pyrenees coverage
+- ✅ **Corsica** (1 massif) - Island mountain support
+- 📝 **Updated documentation** - All massifs listed in README
+
+### 🎉 What's New in v1.0.0 (Previous Release)
 
 **Major Changes:**
 - 🏔️ **Rebranded to "Serac"** - New name, new identity
@@ -47,7 +57,7 @@ weather.serac_chamonix
 
 ---
 
-## 📦 Current Features (v1.0.0)
+## 📦 Current Features (v1.1.0)
 
 ### Phase 1 & 2: Complete ✅
 
@@ -71,9 +81,9 @@ weather.serac_chamonix
   - Summary (text)
   - Bulletin Date (Europe/Paris timezone)
 - **Custom location naming** - user-provided instead of coordinates
-- **Multiple massifs support** - select 0 to 11 massifs via multi-select
+- **Multiple massifs support** - select 0 to 35 massifs via multi-select
 - **Separate device per massif** - clear organization
-- **11 massifs supported** (Haute-Savoie and Savoie regions)
+- **35 massifs supported** - All French Alps (23), Pyrenees (11), Corsica (1)
 - Graceful out-of-season handling
 - 6-hour update intervals
 
@@ -150,22 +160,17 @@ weather.serac_chamonix
 
 ## 🗺️ Massif Configuration
 
-### Supported Massifs (Numeric IDs)
-```python
-MASSIF_IDS = {
-    1: ("Chablais", "CHABLAIS"),
-    2: ("Aravis", "ARAVIS"),
-    3: ("Mont-Blanc", "MONT-BLANC"),
-    4: ("Bauges", "BAUGES"),
-    5: ("Beaufortain", "BEAUFORTAIN"),
-    6: ("Haute-Tarentaise", "HAUTE-TARENTAISE"),
-    9: ("Maurienne", "MAURIENNE"),
-    10: ("Vanoise", "VANOISE"),
-    11: ("Haute-Maurienne", "HAUTE-MAURIENNE"),
-}
-```
+### Supported Massifs (35 Total)
 
-**Expansion potential**: 40+ massifs across Alps, Pyrenees, Corsica
+**Northern Alps (16)**: Chablais, Aravis, Mont-Blanc, Bauges, Beaufortain, Haute-Tarentaise, Chartreuse, Belledonne, Maurienne, Vanoise, Haute-Maurienne, Grandes-Rousses, Thabor, Vercors, Oisans, Pelvoux
+
+**Southern Alps (7)**: Queyras, Dévoluy, Champsaur, Embrunais-Parpaillon, Ubaye, Mercantour, Alpes-Azur
+
+**Pyrenees (11)**: Pays-Basque, Aspe-Ossau, Haute-Bigorre, Aure-Louron, Luchonnais, Couserans, Haute-Ariège, Orlu-St-Barthélémy, Capcir-Puymorens, Cerdagne-Canigou, Andorre
+
+**Corsica (1)**: Corse
+
+All massifs use numeric IDs (1-23, 40-50, 70) for the BRA API - see const.py for full mapping.
 
 ---
 
@@ -189,38 +194,46 @@ custom_components/serac/
 
 ---
 
-## 🚀 Future Enhancements (Post v1.0.0)
+## 🚀 Future Enhancements (Post v1.1.0)
 
-### Priority 1: Options Flow 🟡
-- Change massifs without reinstalling
-- Update entity prefix (optional)
-- Modify BRA token
+**See ROADMAP.md for detailed development plan**
+
+### Priority 1: Options Flow ⚙️
+- Change massifs without reinstalling (HIGHEST USER VALUE)
+- Update BRA token via UI
 - **Estimated effort**: 2-3 hours
 
-### Priority 2: Logo & Branding 🟢
-- Custom logo for integration
+### Priority 2: Logo & Branding 🎨
+- Custom logo for integration (QUICK WIN)
 - Icon for HACS listing
 - Improve visual identity
 - **Estimated effort**: 1-2 hours (once logo designed)
 
-### Priority 3: Expand Massif Support 🟢
-- Add remaining French Alps massifs (12 more)
-- Add Pyrenees massifs (16 total)
-- Add Corsica massif (1)
-- **Total potential**: 40+ massifs
+### Priority 3: Enhanced Documentation 📚
+- Add screenshots to README
+- FAQ section
+- French translation
+- **Estimated effort**: 3-4 hours
 
-### Nice-to-Have Features
+### Priority 4: Code Quality & Diagnostics 🔧
+- Add diagnostics.py
+- Unit tests
+- Error retry logic
+- **Estimated effort**: 4-6 hours
+
+### Future Backlog
 - Hourly BRA risk evolution
-- Avalanche bulletin PDF links
+- Weather alerts/warnings
 - Snow depth sensors
-- Multi-language support (French, German, Italian)
-- Enhanced diagnostics support
-- Custom update intervals
+- Multi-language support (German, Italian)
+- Custom Lovelace card
 
 ---
 
 ## 📚 Version History
 
+- **v1.1.0** (2026-02-11): 🗺️ All 35 French massifs supported (Alps, Pyrenees, Corsica)
+- **v1.0.1** (2026-02-11): 🐛 Fix translation placeholder error in config flow
 - **v1.0.0** (2026-02-11): 🎉 Complete rebrand to "Serac", smart entity naming, breaking changes
 - **v0.6.0** (2026-02-11): Custom location names, multiple massifs, separate devices
 - **v0.5.4** (2026-02-11): Fix BRA timezone (Europe/Paris)
@@ -234,8 +247,8 @@ custom_components/serac/
 
 ### Current Limitations
 - BRA data only available in winter season (~December-May)
-- Limited to 11 massifs (expandable to 40+)
-- No options flow yet (must re-add integration to change massifs)
+- No options flow yet (must re-add integration to change massifs) - **Priority 1 for v1.2.0**
+- No custom logo yet - **Priority 2 for v1.2.0**
 
 ### All Previous Issues Resolved ✅
 - ✅ Timezone handling (Europe/Paris → UTC)
@@ -292,8 +305,11 @@ tail -f /config/home-assistant.log | grep serac
 
 ## 🎯 Next Steps
 
-See **NEXT_STEPS.md** for post-v1.0.0 roadmap.
+See **ROADMAP.md** for comprehensive development plan (v1.2.0 and beyond).
+
+**Immediate next**: Implement Options Flow (Priority 1 - highest user value)
 
 ---
 
-**Status**: Production ready v1.0.0 released 🎉
+**Status**: Production ready v1.1.0 released 🎉
+**Next milestone**: v1.2.0 (Options Flow + Logo)
